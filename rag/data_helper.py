@@ -1,4 +1,4 @@
-import pdftotext
+from pypdf import PdfReader as _PdfReader
 
 
 class PDFReader:
@@ -10,8 +10,8 @@ class PDFReader:
     def read(self) -> list[str]:
         texts = []
         for pdf_path in self.pdf_path:
-            with open(pdf_path, "rb") as file:
-                pdf = pdftotext.PDF(file)
-                # Join all pages into a single string by \n\n
-                texts.append("\n\n".join(pdf))
+            reader = _PdfReader(pdf_path)
+            pages = [page.extract_text() or "" for page in reader.pages]
+            # Join all pages into a single string by \n\n
+            texts.append("\n\n".join(pages))
         return texts
