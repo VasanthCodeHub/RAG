@@ -29,7 +29,6 @@ setuptools.setup(
     install_requires=[
         "sentence-transformers",
         "google-generativeai",
-        "rank_bm25",
         "pypdf",
         "python-dotenv",
         "streamlit",

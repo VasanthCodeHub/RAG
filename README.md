@@ -1,8 +1,8 @@
 # Simple RAG
 
 Ask questions about a PDF (e.g. your resume) using a small retrieval-augmented
-generation pipeline: BM25 retrieval, cross-encoder reranking, and Gemini for
-the answer.
+generation pipeline: embedding-based (vector) retrieval, cross-encoder
+reranking, and Gemini for the answer.
 
 ## Pre-requisites
 

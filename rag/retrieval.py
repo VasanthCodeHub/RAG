@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional
 
 import numpy as np
-from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
 
 
 class BaseRetrieval(ABC):
@@ -23,26 +23,29 @@ class BaseRetrieval(ABC):
         raise NotImplementedError("This retrieval model does not support reranking.")
 
 
-class BM25Retrieval(BaseRetrieval):
+class EmbeddingRetrieval(BaseRetrieval):
 
     def __init__(self, *args, **kwargs):
-        """Initialize the BM25 retrieval model.
+        """Initialize the embedding-based (vector) retrieval model.
         - documents: list[str]: The list of documents to ingest.
         - metadata: list[dict]: The metadata associated with the documents.
+        - model_name: str: The sentence-transformers embedding model to use.
         """
         super().__init__(*args, **kwargs)
-        # Initialize BM25 model here
         documents = kwargs.get("documents")
         metadata = kwargs.get("metadata")
         if not documents:
             raise ValueError("Please provide a list of documents.")
-        self.bm25 = None
+        self.model = SentenceTransformer(
+            kwargs.get("model_name", "all-MiniLM-L6-v2")
+        )
+        self.embeddings = None
         self.documents = None
         self.metadata = None
         self.__ingest__(documents, metadata)
 
     def __ingest__(self, documents: list[str], metadata=None):
-        """Ingest the documents to the BM25 model.
+        """Embed and ingest the documents.
         - documents: list[str]: The list of documents to ingest.
         - metadata: list[dict]: The metadata associated with the documents.
         """
@@ -51,23 +54,28 @@ class BM25Retrieval(BaseRetrieval):
             assert len(documents) == len(
                 metadata
             ), "Length of metadata should be same as length of documents."
-        tokenized_docs = [doc.split() for doc in documents]
-        self.bm25 = BM25Okapi(tokenized_docs)
+        embeddings = self.model.encode(
+            documents, convert_to_numpy=True, normalize_embeddings=True
+        )
+        self.embeddings = embeddings
         self.metadata = metadata
         self.documents = documents
         return True
 
     def retrieve(self, query: str, top_k: int = 10):
-        """Retrieve the top-k documents based on the query.
+        """Retrieve the top-k most semantically similar documents to the query.
         - query: str: The query to retrieve the documents with.
         - top_k: int: The number of documents to return.
         """
-        if not self.bm25:
+        if self.embeddings is None:
             raise RuntimeError(
-                "BM25 model has not been initialized. Call ingest() first."
+                "Embedding index has not been initialized. Call ingest() first."
             )
-        tokenized_query = query.split()
-        scores = self.bm25.get_scores(tokenized_query)
+        query_embedding = self.model.encode(
+            query, convert_to_numpy=True, normalize_embeddings=True
+        )
+        # Embeddings are normalized, so dot product == cosine similarity.
+        scores = self.embeddings @ query_embedding
         top_n = np.argsort(scores)[::-1][:top_k]
         metadata = None
         if self.metadata:

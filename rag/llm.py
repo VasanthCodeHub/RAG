@@ -21,7 +21,7 @@ class GeminiLLM(BaseLLM):
     def __init__(self, *args, **kwargs):
         """Initialize the Gemini language model.
         - api_key: str: The API key for the Gemini API. Falls back to GOOGLE_API_KEY.
-        - model_name: str: The Gemini model to use. Defaults to "gemini-1.5-flash".
+        - model_name: str: The Gemini model to use. Defaults to "gemini-flash-latest".
         """
         super().__init__(*args, **kwargs)
         api_key = os.getenv("GOOGLE_API_KEY") or kwargs.get("api_key")
@@ -31,7 +31,7 @@ class GeminiLLM(BaseLLM):
             )
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(
-            kwargs.get("model_name", "gemini-1.5-flash"),
+            kwargs.get("model_name", "gemini-flash-latest"),
             generation_config=genai.GenerationConfig(temperature=0.0),
         )
 
