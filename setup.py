@@ -29,6 +29,7 @@ setuptools.setup(
     install_requires=[
         "sentence-transformers",
         "google-generativeai",
+        "groq",
         "pypdf",
         "python-dotenv",
         "streamlit",

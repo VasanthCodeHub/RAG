@@ -5,7 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from rag.data_helper import PDFReader
-from rag.llm import GeminiLLM
+from rag.llm import GroqLLM
 from rag.pipeline import SimpleRAGPipeline
 from rag.rerank import CrossEncoderRerank
 from rag.retrieval import EmbeddingRetrieval
@@ -19,13 +19,13 @@ st.title("📄 Simple RAG — ask questions about a PDF")
 with st.sidebar:
     st.subheader("Settings")
     api_key_input = st.text_input(
-        "Gemini API key",
-        value=os.getenv("GOOGLE_API_KEY", ""),
+        "Groq API key",
+        value=os.getenv("GROQ_API_KEY", ""),
         type="password",
-        help="Get one at https://aistudio.google.com/app/apikey",
+        help="Get one at https://console.groq.com/keys",
     )
     if api_key_input:
-        os.environ["GOOGLE_API_KEY"] = api_key_input
+        os.environ["GROQ_API_KEY"] = api_key_input
 
 uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 
@@ -41,7 +41,7 @@ def build_pipeline(pdf_bytes: bytes, api_key: str):
     chunks = text2chunk(text, chunk_size=200, overlap=50)
 
     retrieval = EmbeddingRetrieval(documents=chunks)
-    llm = GeminiLLM(api_key=api_key)
+    llm = GroqLLM(api_key=api_key)
     rerank = CrossEncoderRerank(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
     pipeline = SimpleRAGPipeline(retrieval=retrieval, llm=llm, rerank=rerank)
     return pipeline, len(chunks)
@@ -54,11 +54,11 @@ if not uploaded_file:
     st.info("Upload a PDF to get started.")
     st.stop()
 
-if not os.getenv("GOOGLE_API_KEY"):
-    st.warning("Enter your Gemini API key in the sidebar to continue.")
+if not os.getenv("GROQ_API_KEY"):
+    st.warning("Enter your Groq API key in the sidebar to continue.")
     st.stop()
 
-pipeline, n_chunks = build_pipeline(uploaded_file.getvalue(), os.environ["GOOGLE_API_KEY"])
+pipeline, n_chunks = build_pipeline(uploaded_file.getvalue(), os.environ["GROQ_API_KEY"])
 st.caption(f"Loaded '{uploaded_file.name}' into {n_chunks} chunks.")
 
 for role, content in st.session_state.messages:

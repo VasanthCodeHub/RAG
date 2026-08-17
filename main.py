@@ -4,7 +4,7 @@ import sys
 from dotenv import load_dotenv
 
 from rag.data_helper import PDFReader
-from rag.llm import GeminiLLM
+from rag.llm import GroqLLM
 from rag.pipeline import Answer, SimpleRAGPipeline
 from rag.rerank import CrossEncoderRerank
 from rag.retrieval import EmbeddingRetrieval
@@ -22,7 +22,7 @@ def build_pipeline(pdf_path: str) -> SimpleRAGPipeline:
     print(f"Loaded '{pdf_path}' into {len(chunks)} chunks.")
 
     retrieval = EmbeddingRetrieval(documents=chunks)
-    llm = GeminiLLM()
+    llm = GroqLLM()
     rerank = CrossEncoderRerank(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
     return SimpleRAGPipeline(retrieval=retrieval, llm=llm, rerank=rerank)
 

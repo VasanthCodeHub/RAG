@@ -2,7 +2,7 @@
 
 Ask questions about a PDF (e.g. your resume) using a small retrieval-augmented
 generation pipeline: embedding-based (vector) retrieval, cross-encoder
-reranking, and Gemini for the answer.
+reranking, and Groq for the answer.
 
 ## Pre-requisites
 
@@ -31,9 +31,9 @@ pip install -e .
 cp .env.example .env
 ```
 
-Add your Gemini API key to `.env` (get one at https://aistudio.google.com/app/apikey):
+Add your Groq API key to `.env` (get one at https://console.groq.com/keys):
 ```
-GOOGLE_API_KEY=your-key-here
+GROQ_API_KEY=your-key-here
 ```
 
 ## Usage
