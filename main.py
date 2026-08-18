@@ -18,7 +18,7 @@ RESUME_PATH = sys.argv[1] if len(sys.argv) > 1 else "resume.pdf"
 def build_pipeline(pdf_path: str) -> SimpleRAGPipeline:
     contents = PDFReader(pdf_paths=[pdf_path]).read()
     text = " ".join(contents)
-    chunks = text2chunk(text, chunk_size=200, overlap=50)
+    chunks = text2chunk(text, chunk_size=1000, overlap=200)
     print(f"Loaded '{pdf_path}' into {len(chunks)} chunks.")
 
     retrieval = EmbeddingRetrieval(documents=chunks)

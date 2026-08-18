@@ -30,6 +30,7 @@ setuptools.setup(
         "sentence-transformers",
         "google-generativeai",
         "groq",
+        "rank_bm25",
         "pypdf",
         "python-dotenv",
         "streamlit",

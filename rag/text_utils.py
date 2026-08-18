@@ -1,12 +1,16 @@
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+
 def text2chunk(text: str, chunk_size: int, overlap: int = 0) -> list[str]:
-    """Split the text into chunks of a specified size.
+    """Split the text into chunks of a specified size using LangChain's
+    RecursiveCharacterTextSplitter, which splits on a separator hierarchy
+    (paragraphs, then lines, then words) so chunks respect natural text
+    boundaries instead of cutting mid-sentence.
     - text: str: The text to split into chunks.
-    - chụnk_size: int: The size of each chunk.
-    - overlap: int: The overlap between the chunks.
-    Note: The size is the number of words in the chunk.
+    - chunk_size: int: The size of each chunk, in characters.
+    - overlap: int: The character overlap between consecutive chunks.
     """
-    chunks = []
-    words = text.split()
-    for i in range(0, len(words), chunk_size - overlap):
-        chunks.append(" ".join(words[i : i + chunk_size]))
-    return chunks
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=overlap
+    )
+    return splitter.split_text(text)

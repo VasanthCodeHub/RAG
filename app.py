@@ -38,7 +38,7 @@ def build_pipeline(pdf_bytes: bytes, api_key: str):
 
     contents = PDFReader(pdf_paths=[tmp_path]).read()
     text = " ".join(contents)
-    chunks = text2chunk(text, chunk_size=200, overlap=50)
+    chunks = text2chunk(text, chunk_size=1000, overlap=200)
 
     retrieval = EmbeddingRetrieval(documents=chunks)
     llm = GroqLLM(api_key=api_key)
