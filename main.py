@@ -9,8 +9,10 @@ from rag.pipeline import Answer, SimpleRAGPipeline
 from rag.rerank import CrossEncoderRerank
 from rag.retrieval import EmbeddingRetrieval
 from rag.text_utils import text2chunk
+from rag.tracing import configure_logging
 
 load_dotenv()
+configure_logging()
 
 RESUME_PATH = sys.argv[1] if len(sys.argv) > 1 else "resume.pdf"
 

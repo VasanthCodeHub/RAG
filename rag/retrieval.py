@@ -1,9 +1,13 @@
+import logging
+import time
 from abc import ABC
 from typing import Optional
 
 import numpy as np
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
+
+logger = logging.getLogger("rag.retrieval")
 
 
 class BaseRetrieval(ABC):
@@ -55,8 +59,13 @@ class EmbeddingRetrieval(BaseRetrieval):
             assert len(documents) == len(
                 metadata
             ), "Length of metadata should be same as length of documents."
+        start = time.perf_counter()
         embeddings = self.model.encode(
             documents, convert_to_numpy=True, normalize_embeddings=True
+        )
+        duration_ms = (time.perf_counter() - start) * 1000
+        logger.info(
+            "ingest status=ok num_documents=%d duration_ms=%.1f", len(documents), duration_ms
         )
         self.embeddings = embeddings
         self.metadata = metadata
@@ -131,10 +140,18 @@ class HybridRetrieval(BaseRetrieval):
             assert len(documents) == len(
                 metadata
             ), "Length of metadata should be same as length of documents."
+        start = time.perf_counter()
         tokenized_docs = [doc.lower().split() for doc in documents]
         self.bm25 = BM25Okapi(tokenized_docs)
         self.embeddings = self.embedding_model.encode(
             documents, convert_to_numpy=True, normalize_embeddings=True
+        )
+        duration_ms = (time.perf_counter() - start) * 1000
+        logger.info(
+            "ingest status=ok num_documents=%d duration_ms=%.1f alpha=%.2f",
+            len(documents),
+            duration_ms,
+            self.alpha,
         )
         self.documents = documents
         self.metadata = metadata

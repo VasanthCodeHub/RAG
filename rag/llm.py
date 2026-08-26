@@ -1,9 +1,12 @@
+import logging
 import os
 from abc import ABC
 
 import google.api_core.exceptions
 import google.generativeai as genai
 from groq import Groq
+
+logger = logging.getLogger("rag.llm")
 
 
 class BaseLLM(ABC):
@@ -43,12 +46,21 @@ class GeminiLLM(BaseLLM):
         """
         max_retries = kwargs.get("max_retries", 3)
         last_error = None
-        for _ in range(max_retries):
+        for attempt in range(1, max_retries + 1):
             try:
                 response = self.model.generate_content(prompt)
                 return response.text
             except (google.api_core.exceptions.InternalServerError, Exception) as error:
                 last_error = error
+                logger.warning(
+                    "gemini generate attempt=%d/%d failed error=%r",
+                    attempt,
+                    max_retries,
+                    error,
+                )
+        logger.error(
+            "gemini generate failed after %d attempts error=%r", max_retries, last_error
+        )
         raise RuntimeError(
             f"Gemini request failed after {max_retries} attempts"
         ) from last_error
@@ -79,7 +91,7 @@ class GroqLLM(BaseLLM):
         """
         max_retries = kwargs.get("max_retries", 3)
         last_error = None
-        for _ in range(max_retries):
+        for attempt in range(1, max_retries + 1):
             try:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
@@ -89,6 +101,19 @@ class GroqLLM(BaseLLM):
                 return response.choices[0].message.content
             except Exception as error:
                 last_error = error
+                logger.warning(
+                    "groq generate attempt=%d/%d model=%r failed error=%r",
+                    attempt,
+                    max_retries,
+                    self.model_name,
+                    error,
+                )
+        logger.error(
+            "groq generate failed after %d attempts model=%r error=%r",
+            max_retries,
+            self.model_name,
+            last_error,
+        )
         raise RuntimeError(
             f"Groq request failed after {max_retries} attempts"
         ) from last_error

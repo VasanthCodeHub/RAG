@@ -10,8 +10,10 @@ from rag.pipeline import SimpleRAGPipeline
 from rag.rerank import CrossEncoderRerank
 from rag.retrieval import EmbeddingRetrieval
 from rag.text_utils import text2chunk
+from rag.tracing import configure_logging
 
 load_dotenv()
+configure_logging()
 
 st.set_page_config(page_title="Simple RAG", page_icon="📄")
 st.title("📄 Simple RAG — ask questions about a PDF")
