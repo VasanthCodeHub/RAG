@@ -1,12 +1,13 @@
 import logging
 import time
 from abc import ABC
+from datetime import datetime, timezone
 
 from .llm import BaseLLM
 from .prompt import ANSWER_PROMPT
 from .rerank import BaseRerank
 from .retrieval import BaseRetrieval
-from .tracing import new_trace_id, traced_stage
+from .tracing import detect_issues, new_trace_id, preview_text, record_query_trace, traced_stage
 
 logger = logging.getLogger("rag.pipeline")
 
@@ -51,14 +52,20 @@ class SimpleRAGPipeline(Pipeline):
         logger.info("query_id=%s stage=start query=%r", query_id, query)
 
         # Retrieve documents
+        retrieve_start = time.perf_counter()
         with traced_stage(logger, "retrieve", query_id=query_id) as info:
             relevant_docs, relevant_meta = self.retrieval.retrieve(
                 query, top_k=self.retrieval_top_k
             )
             info["docs_retrieved"] = len(relevant_docs)
+        retrieve_ms = (time.perf_counter() - retrieve_start) * 1000
 
         # Rerank documents
+        scores = []
+        rerank_ms = 0.0
+        top_score = None
         if self.rerank:
+            rerank_start = time.perf_counter()
             with traced_stage(logger, "rerank", query_id=query_id) as info:
                 reranked_docs, scores = self.rerank.rerank(
                     query, relevant_docs, top_k=self.rerank_top_k
@@ -66,6 +73,7 @@ class SimpleRAGPipeline(Pipeline):
                 info["docs_after_rerank"] = len(reranked_docs)
                 top_score = float(scores[0]) if scores else None
                 info["top_score"] = round(top_score, 4) if top_score is not None else None
+            rerank_ms = (time.perf_counter() - rerank_start) * 1000
             if top_score is not None and top_score <= 0:
                 logger.warning(
                     "query_id=%s stage=rerank status=low_relevance top_score=%.4f "
@@ -85,9 +93,11 @@ class SimpleRAGPipeline(Pipeline):
 
         # Generate answer
         prompt = ANSWER_PROMPT.format(query=query, context="\n".join(reranked_docs))
+        generate_start = time.perf_counter()
         with traced_stage(logger, "generate", query_id=query_id) as info:
             answer = self.llm.generate(prompt)
             info["answer_len"] = len(answer) if answer else 0
+        generate_ms = (time.perf_counter() - generate_start) * 1000
 
         total_ms = (time.perf_counter() - start) * 1000
         logger.info(
@@ -95,4 +105,44 @@ class SimpleRAGPipeline(Pipeline):
             query_id,
             total_ms,
         )
+
+        issues, _ = detect_issues(relevant_docs, reranked_docs, scores, answer)
+        record_query_trace(
+            query_id,
+            {
+                "query_id": query_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "query": query,
+                "steps": {
+                    "retrieve": {
+                        "duration_ms": round(retrieve_ms, 1),
+                        "top_k": self.retrieval_top_k,
+                        "docs_retrieved": len(relevant_docs),
+                        "documents_preview": [preview_text(d) for d in relevant_docs],
+                    },
+                    "rerank": {
+                        "duration_ms": round(rerank_ms, 1),
+                        "docs_after_rerank": len(reranked_docs),
+                        "top_score": round(top_score, 4) if top_score is not None else None,
+                        "documents": [
+                            {
+                                "text": preview_text(doc),
+                                "score": round(float(score), 4) if scores else None,
+                            }
+                            for doc, score in zip(
+                                reranked_docs, scores or [None] * len(reranked_docs)
+                            )
+                        ],
+                    },
+                    "generate": {
+                        "duration_ms": round(generate_ms, 1),
+                        "answer": answer,
+                    },
+                },
+                "total_duration_ms": round(total_ms, 1),
+                "issues": issues,
+                "status": "issues_found" if issues else "ok",
+            },
+        )
+
         return Answer(answer=answer, contexts=reranked_docs)
