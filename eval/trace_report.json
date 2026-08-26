@@ -1,0 +1,193 @@
+{
+  "queries": [
+    {
+      "query_id": "bb1743ba",
+      "timestamp": "2026-08-26T12:51:27.517767+00:00",
+      "query": "what are the project's this candidate worked?",
+      "steps": {
+        "retrieve": {
+          "duration_ms": 40.2,
+          "top_k": 100,
+          "docs_retrieved": 25,
+          "documents_preview": [
+            "Project  Name:  Swapsi   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Firebase,   Node.js   (Express),   Firestore,   Stripe   Payments,   Google   Authentication,   Firebase   Remote   Config,   Firebase   Cloud   Messaging   (FCM),   React   Na...",
+            "RECENT  PROFESSIONAL  EXPERIENCE:     Project  Name:  Job  Space   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Redux   Toolkit,   Firebase,   Firebase   Cloud   Messaging   (FCM),   Firebase   Crashlytics,   Firebase   Remote   Config,   React...",
+            "Project  Management  Tool:  JIRA   Description:   ●  Keep  track  of  warranty  expiration  dates  and  schedule  regular  maintenance  for  your   appliances   and   gadgets. ●  Receive  reviews  from  trusted  sources  like  friends  and  family  to  make  informed  decisions   about   products. ●...",
+            "communication,   and   third-party   services.  ●  Participated  in  code  reviews,  sprint  planning,  technical  discussions,  testing,  debugging,   estimation,   and   release   activities.  ●  Worked  with  cross-functional  teams  to  troubleshoot  production  issues  and  deliver  reliable...",
+            "and   terminated   application   states.  ●  Experience  working  with  Android  and  iOS  build,  release,  and  deployment  workflows   using   EAS   Build,   GitHub   Actions,   and   Codemagic.  ●  Experienced  in  debugging  production  issues,  analyzing  application  crashes,   -Mobile  Devel...",
+            "Description   Job  Space  is  a  next-generation  job-seeking  platform  designed  exclusively  for  Australia  and  New   Zealand.   It   empowers   job   seekers   to   explore   opportunities   across   sectors,   create   professional   profiles,   and   apply   seamlessly   to   roles.   ●  Job...",
+            "notifications   when   matching   jobs   are   posted.  ●  Performance  Tracking:  Application  status  updates  and  notifications  keep  job  seekers   informed   throughout   the   hiring   process.  ●  Remote  Config  Management:  Firebase  Remote  Config  is  used  to  dynamically  update  app...",
+            "resolving  integration  issues,  and  contributing  to  application  stability  improvements.  ●  Experience  implementing  deep  linking,  authentication,  biometric  authentication,   payment   integrations,   and   third-party   mobile   services.  ●  Good  understanding  of  Git  workflows,  pul...",
+            "Navigation  &  Integration:  React  Navigation,  Expo  Router,  Deep  Linking,  Authentication,   Biometric   Authentication.    Notifications:  Firebase  Cloud  Messaging  (FCM),  Apple  Push  Notification  Service  (APNs),   Pushwoosh.    Firebase:  Firebase  Authentication,  Firestore,  Cloud  Fu...",
+            "job   applications,   profile   creation,   and   account   management.  ●  Built  resume  upload  and  cover  letter  management  features  with  seamless  document   handling   and   validation.  ●  Integrated  REST  APIs  for  job  listings,  application  submissions,  user  profiles,  and   noti...",
+            "premium   feature   monetization.  ●  Implemented  WebSocket  and  Socket.io  based  real-time  communication  for  instant   matchmaking   updates,   notifications,   and   user   interactions.  ●  Implemented  push  notification  workflows  using  Firebase  Cloud  Messaging  (FCM)  and  APNs   for...",
+            "●  Push  Notifications:  Implemented  Firebase  Cloud  Messaging  (FCM)  to  notify  users  about   matches,   swap   requests,   listing   expirations,   and   completed   swaps.  ●  CI/CD  Integration:  Automated  testing  and  build  generation  using  Codemagic  and  GitHub   Actions   for   eff...",
+            "activities.  ●  Collaborated  with  cross-functional  teams  to  troubleshoot  production  issues,  enhance   UI/UX,   and   deliver   high-quality   mobile   experiences.  ●  Followed  Agile  methodologies,  participated  in  sprint  planning,  code  reviews,  and  release   management   using   Az...",
+            "after   which   a   leaderboard   of   mutual   matches   is   generated   for   swap   selection.  ●  Priority-Based  Swap  Decisions:  The  user  who  listed  first  gets  the  first  choice  to  finalize  a   swap   from   their   leaderboard,   ensuring   fair   and   structured   match   resolu...",
+            "schedules   to   stay   organized. ●  Access  a  comprehensive  database  of  user  experiences  and  feedback  on  various  products   and   services   to   make   informed   choices.  Responsibilities:   ●  Integrated  DigiLocker  to  enable  safe  and  secure  document  management.  ●  Implemente...",
+            "Communication.    Performance:  State  Management  Optimization,  API  Caching,  Pagination,  Lazy  Loading,   UI   Optimization,   Animation   Optimization.     -Mobile  Developer",
+            "and   scalable   development   practices.  ●  Used  React  Hooks,  component  lifecycle  patterns,  Redux  Toolkit,  and  Context  API  to   manage   application   state   and   user   interactions.  ●  Designed  and  maintained  navigation  flows  using  React  Navigation  and  Expo  Router,   incl...",
+            "optimized   data   loading   strategies.  ●  Implemented  smooth  animations  and  gesture-based  interactions  using  React  Native   Reanimated   while   maintaining   responsive   UI   behavior.  ●  Investigated  application  issues  through  debugging,  crash  reports,  logs,  and  production...",
+            "attention   to   application   performance,   maintainability,   and   consistent   behavior   across   platforms.  ●  Experience  improving  application  responsiveness  through  optimized  state   management,   API   caching,   pagination,   lazy   loading,   and   efficient   UI   rendering.  ●...",
+            "Midhun  T   Mobile   Developer           SUMMARY :      ●  4+  years  of  experience  in  Mobile  development,  primarily  using  React  Native  and   TypeScript,   with   experience   across   application   development,   testing,   debugging,   maintenance,   and   production   support.  ●  Strong...",
+            "●  Integrated  Firebase  Cloud  Messaging  (FCM)  and  APNs  for  notification  workflows  across   foreground,   background,   and   terminated   application   states.  ●  Configured  and  maintained  EAS  Build  workflows  for  Android  and  iOS  application  builds,   testing,   and   release   g...",
+            "tracking.    ●  Implemented  push  notification  workflows  using  Firebase  Cloud  Messaging  (FCM)  and   APNs   for   warranty   reminders,   maintenance   alerts,   and   user   engagement   updates.   -Mobile  Developer",
+            "●  Developed  job  alert  functionality  with  Firebase  Cloud  Messaging  (FCM)  push  notifications   for   newly   posted   jobs.  ●  Implemented  Expo  Router  for  navigation  architecture  and  route  management  across   application   modules.  ●  Configured  and  maintained  EAS  Build  pipe...",
+            "Native   Reanimated   to   enhance   user   engagement   and   application   performance.  ●  Real-Time  Backend  with  Firebase  &  Socket.io:  Used  Firestore  and  Socket.io  for   real-time   syncing   of   listings,   matches,   notifications,   and   swap   activities.  ●  Remote  Config  &  D...",
+            "application   states.  ●  Optimized  application  performance  through  efficient  state  management  using  Redux   Toolkit,   API   caching,   pagination,   and   lazy   loading   techniques.  ●  Managed  Firebase  Authentication,  Firestore  security  rules,  and  role-based  access  control.  ●..."
+          ]
+        },
+        "rerank": {
+          "duration_ms": 1152.8,
+          "docs_after_rerank": 1,
+          "top_score": -8.3577,
+          "documents": [
+            {
+              "text": "Project  Name:  Swapsi   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Firebase,   Node.js   (Express),   Firestore,   Stripe   Payments,   Google   Authentication,   Firebase   Remote   Config,   Firebase   Cloud   Messaging   (FCM),   React   Na...",
+              "score": -8.3577
+            }
+          ]
+        },
+        "generate": {
+          "duration_ms": 795.7,
+          "answer": "The candidate worked on the **Swapsi** project."
+        }
+      },
+      "total_duration_ms": 1989.5,
+      "issues": [
+        {
+          "stage": "rerank",
+          "type": "low_relevance",
+          "detail": "Top rerank score is -8.3577 (<= 0): no retrieved chunk was judged actually relevant to the query -- the reranker fell back to returning its best (still irrelevant) match."
+        }
+      ],
+      "status": "issues_found"
+    },
+    {
+      "query_id": "73d12427",
+      "timestamp": "2026-08-26T12:56:14.242634+00:00",
+      "query": "who is the candidate for this resume?",
+      "steps": {
+        "retrieve": {
+          "duration_ms": 28.2,
+          "top_k": 100,
+          "docs_retrieved": 25,
+          "documents_preview": [
+            "Description   Job  Space  is  a  next-generation  job-seeking  platform  designed  exclusively  for  Australia  and  New   Zealand.   It   empowers   job   seekers   to   explore   opportunities   across   sectors,   create   professional   profiles,   and   apply   seamlessly   to   roles.   ●  Job...",
+            "job   applications,   profile   creation,   and   account   management.  ●  Built  resume  upload  and  cover  letter  management  features  with  seamless  document   handling   and   validation.  ●  Integrated  REST  APIs  for  job  listings,  application  submissions,  user  profiles,  and   noti...",
+            "notifications   when   matching   jobs   are   posted.  ●  Performance  Tracking:  Application  status  updates  and  notifications  keep  job  seekers   informed   throughout   the   hiring   process.  ●  Remote  Config  Management:  Firebase  Remote  Config  is  used  to  dynamically  update  app...",
+            "RECENT  PROFESSIONAL  EXPERIENCE:     Project  Name:  Job  Space   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Redux   Toolkit,   Firebase,   Firebase   Cloud   Messaging   (FCM),   Firebase   Crashlytics,   Firebase   Remote   Config,   React...",
+            "Project  Name:  Swapsi   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Firebase,   Node.js   (Express),   Firestore,   Stripe   Payments,   Google   Authentication,   Firebase   Remote   Config,   Firebase   Cloud   Messaging   (FCM),   React   Na...",
+            "after   which   a   leaderboard   of   mutual   matches   is   generated   for   swap   selection.  ●  Priority-Based  Swap  Decisions:  The  user  who  listed  first  gets  the  first  choice  to  finalize  a   swap   from   their   leaderboard,   ensuring   fair   and   structured   match   resolu...",
+            "schedules   to   stay   organized. ●  Access  a  comprehensive  database  of  user  experiences  and  feedback  on  various  products   and   services   to   make   informed   choices.  Responsibilities:   ●  Integrated  DigiLocker  to  enable  safe  and  secure  document  management.  ●  Implemente...",
+            "communication,   and   third-party   services.  ●  Participated  in  code  reviews,  sprint  planning,  technical  discussions,  testing,  debugging,   estimation,   and   release   activities.  ●  Worked  with  cross-functional  teams  to  troubleshoot  production  issues  and  deliver  reliable...",
+            "Navigation  &  Integration:  React  Navigation,  Expo  Router,  Deep  Linking,  Authentication,   Biometric   Authentication.    Notifications:  Firebase  Cloud  Messaging  (FCM),  Apple  Push  Notification  Service  (APNs),   Pushwoosh.    Firebase:  Firebase  Authentication,  Firestore,  Cloud  Fu...",
+            "Project  Management  Tool:  JIRA   Description:   ●  Keep  track  of  warranty  expiration  dates  and  schedule  regular  maintenance  for  your   appliances   and   gadgets. ●  Receive  reviews  from  trusted  sources  like  friends  and  family  to  make  informed  decisions   about   products. ●...",
+            "Communication.    Performance:  State  Management  Optimization,  API  Caching,  Pagination,  Lazy  Loading,   UI   Optimization,   Animation   Optimization.     -Mobile  Developer",
+            "activities.  ●  Collaborated  with  cross-functional  teams  to  troubleshoot  production  issues,  enhance   UI/UX,   and   deliver   high-quality   mobile   experiences.  ●  Followed  Agile  methodologies,  participated  in  sprint  planning,  code  reviews,  and  release   management   using   Az...",
+            "attention   to   application   performance,   maintainability,   and   consistent   behavior   across   platforms.  ●  Experience  improving  application  responsiveness  through  optimized  state   management,   API   caching,   pagination,   lazy   loading,   and   efficient   UI   rendering.  ●...",
+            "●  Developed  job  alert  functionality  with  Firebase  Cloud  Messaging  (FCM)  push  notifications   for   newly   posted   jobs.  ●  Implemented  Expo  Router  for  navigation  architecture  and  route  management  across   application   modules.  ●  Configured  and  maintained  EAS  Build  pipe...",
+            "and   terminated   application   states.  ●  Experience  working  with  Android  and  iOS  build,  release,  and  deployment  workflows   using   EAS   Build,   GitHub   Actions,   and   Codemagic.  ●  Experienced  in  debugging  production  issues,  analyzing  application  crashes,   -Mobile  Devel...",
+            "Native   Reanimated   to   enhance   user   engagement   and   application   performance.  ●  Real-Time  Backend  with  Firebase  &  Socket.io:  Used  Firestore  and  Socket.io  for   real-time   syncing   of   listings,   matches,   notifications,   and   swap   activities.  ●  Remote  Config  &  D...",
+            "resolving  integration  issues,  and  contributing  to  application  stability  improvements.  ●  Experience  implementing  deep  linking,  authentication,  biometric  authentication,   payment   integrations,   and   third-party   mobile   services.  ●  Good  understanding  of  Git  workflows,  pul...",
+            "premium   feature   monetization.  ●  Implemented  WebSocket  and  Socket.io  based  real-time  communication  for  instant   matchmaking   updates,   notifications,   and   user   interactions.  ●  Implemented  push  notification  workflows  using  Firebase  Cloud  Messaging  (FCM)  and  APNs   for...",
+            "Midhun  T   Mobile   Developer           SUMMARY :      ●  4+  years  of  experience  in  Mobile  development,  primarily  using  React  Native  and   TypeScript,   with   experience   across   application   development,   testing,   debugging,   maintenance,   and   production   support.  ●  Strong...",
+            "optimized   data   loading   strategies.  ●  Implemented  smooth  animations  and  gesture-based  interactions  using  React  Native   Reanimated   while   maintaining   responsive   UI   behavior.  ●  Investigated  application  issues  through  debugging,  crash  reports,  logs,  and  production...",
+            "application   states.  ●  Optimized  application  performance  through  efficient  state  management  using  Redux   Toolkit,   API   caching,   pagination,   and   lazy   loading   techniques.  ●  Managed  Firebase  Authentication,  Firestore  security  rules,  and  role-based  access  control.  ●...",
+            "●  Push  Notifications:  Implemented  Firebase  Cloud  Messaging  (FCM)  to  notify  users  about   matches,   swap   requests,   listing   expirations,   and   completed   swaps.  ●  CI/CD  Integration:  Automated  testing  and  build  generation  using  Codemagic  and  GitHub   Actions   for   eff...",
+            "●  Integrated  Firebase  Cloud  Messaging  (FCM)  and  APNs  for  notification  workflows  across   foreground,   background,   and   terminated   application   states.  ●  Configured  and  maintained  EAS  Build  workflows  for  Android  and  iOS  application  builds,   testing,   and   release   g...",
+            "and   scalable   development   practices.  ●  Used  React  Hooks,  component  lifecycle  patterns,  Redux  Toolkit,  and  Context  API  to   manage   application   state   and   user   interactions.  ●  Designed  and  maintained  navigation  flows  using  React  Navigation  and  Expo  Router,   incl...",
+            "tracking.    ●  Implemented  push  notification  workflows  using  Firebase  Cloud  Messaging  (FCM)  and   APNs   for   warranty   reminders,   maintenance   alerts,   and   user   engagement   updates.   -Mobile  Developer"
+          ]
+        },
+        "rerank": {
+          "duration_ms": 1052.7,
+          "docs_after_rerank": 1,
+          "top_score": -9.3903,
+          "documents": [
+            {
+              "text": "Description   Job  Space  is  a  next-generation  job-seeking  platform  designed  exclusively  for  Australia  and  New   Zealand.   It   empowers   job   seekers   to   explore   opportunities   across   sectors,   create   professional   profiles,   and   apply   seamlessly   to   roles.   ●  Job...",
+              "score": -9.3903
+            }
+          ]
+        },
+        "generate": {
+          "duration_ms": 873.8,
+          "answer": "The provided context does not contain any information about a specific résumé or the individual who authored it. Therefore, the candidate’s identity cannot be determined from the text you shared."
+        }
+      },
+      "total_duration_ms": 1955.0,
+      "issues": [
+        {
+          "stage": "rerank",
+          "type": "low_relevance",
+          "detail": "Top rerank score is -9.3903 (<= 0): no retrieved chunk was judged actually relevant to the query -- the reranker fell back to returning its best (still irrelevant) match."
+        }
+      ],
+      "status": "issues_found"
+    },
+    {
+      "query_id": "e8990bdf",
+      "timestamp": "2026-08-26T12:56:36.769509+00:00",
+      "query": "which technology this project by the way",
+      "steps": {
+        "retrieve": {
+          "duration_ms": 35.2,
+          "top_k": 100,
+          "docs_retrieved": 25,
+          "documents_preview": [
+            "Project  Management  Tool:  JIRA   Description:   ●  Keep  track  of  warranty  expiration  dates  and  schedule  regular  maintenance  for  your   appliances   and   gadgets. ●  Receive  reviews  from  trusted  sources  like  friends  and  family  to  make  informed  decisions   about   products. ●...",
+            "Communication.    Performance:  State  Management  Optimization,  API  Caching,  Pagination,  Lazy  Loading,   UI   Optimization,   Animation   Optimization.     -Mobile  Developer",
+            "communication,   and   third-party   services.  ●  Participated  in  code  reviews,  sprint  planning,  technical  discussions,  testing,  debugging,   estimation,   and   release   activities.  ●  Worked  with  cross-functional  teams  to  troubleshoot  production  issues  and  deliver  reliable...",
+            "premium   feature   monetization.  ●  Implemented  WebSocket  and  Socket.io  based  real-time  communication  for  instant   matchmaking   updates,   notifications,   and   user   interactions.  ●  Implemented  push  notification  workflows  using  Firebase  Cloud  Messaging  (FCM)  and  APNs   for...",
+            "●  Push  Notifications:  Implemented  Firebase  Cloud  Messaging  (FCM)  to  notify  users  about   matches,   swap   requests,   listing   expirations,   and   completed   swaps.  ●  CI/CD  Integration:  Automated  testing  and  build  generation  using  Codemagic  and  GitHub   Actions   for   eff...",
+            "Native   Reanimated   to   enhance   user   engagement   and   application   performance.  ●  Real-Time  Backend  with  Firebase  &  Socket.io:  Used  Firestore  and  Socket.io  for   real-time   syncing   of   listings,   matches,   notifications,   and   swap   activities.  ●  Remote  Config  &  D...",
+            "and   scalable   development   practices.  ●  Used  React  Hooks,  component  lifecycle  patterns,  Redux  Toolkit,  and  Context  API  to   manage   application   state   and   user   interactions.  ●  Designed  and  maintained  navigation  flows  using  React  Navigation  and  Expo  Router,   incl...",
+            "resolving  integration  issues,  and  contributing  to  application  stability  improvements.  ●  Experience  implementing  deep  linking,  authentication,  biometric  authentication,   payment   integrations,   and   third-party   mobile   services.  ●  Good  understanding  of  Git  workflows,  pul...",
+            "schedules   to   stay   organized. ●  Access  a  comprehensive  database  of  user  experiences  and  feedback  on  various  products   and   services   to   make   informed   choices.  Responsibilities:   ●  Integrated  DigiLocker  to  enable  safe  and  secure  document  management.  ●  Implemente...",
+            "optimized   data   loading   strategies.  ●  Implemented  smooth  animations  and  gesture-based  interactions  using  React  Native   Reanimated   while   maintaining   responsive   UI   behavior.  ●  Investigated  application  issues  through  debugging,  crash  reports,  logs,  and  production...",
+            "Midhun  T   Mobile   Developer           SUMMARY :      ●  4+  years  of  experience  in  Mobile  development,  primarily  using  React  Native  and   TypeScript,   with   experience   across   application   development,   testing,   debugging,   maintenance,   and   production   support.  ●  Strong...",
+            "Project  Name:  Swapsi   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Firebase,   Node.js   (Express),   Firestore,   Stripe   Payments,   Google   Authentication,   Firebase   Remote   Config,   Firebase   Cloud   Messaging   (FCM),   React   Na...",
+            "attention   to   application   performance,   maintainability,   and   consistent   behavior   across   platforms.  ●  Experience  improving  application  responsiveness  through  optimized  state   management,   API   caching,   pagination,   lazy   loading,   and   efficient   UI   rendering.  ●...",
+            "after   which   a   leaderboard   of   mutual   matches   is   generated   for   swap   selection.  ●  Priority-Based  Swap  Decisions:  The  user  who  listed  first  gets  the  first  choice  to  finalize  a   swap   from   their   leaderboard,   ensuring   fair   and   structured   match   resolu...",
+            "RECENT  PROFESSIONAL  EXPERIENCE:     Project  Name:  Job  Space   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Redux   Toolkit,   Firebase,   Firebase   Cloud   Messaging   (FCM),   Firebase   Crashlytics,   Firebase   Remote   Config,   React...",
+            "tracking.    ●  Implemented  push  notification  workflows  using  Firebase  Cloud  Messaging  (FCM)  and   APNs   for   warranty   reminders,   maintenance   alerts,   and   user   engagement   updates.   -Mobile  Developer",
+            "job   applications,   profile   creation,   and   account   management.  ●  Built  resume  upload  and  cover  letter  management  features  with  seamless  document   handling   and   validation.  ●  Integrated  REST  APIs  for  job  listings,  application  submissions,  user  profiles,  and   noti...",
+            "and   terminated   application   states.  ●  Experience  working  with  Android  and  iOS  build,  release,  and  deployment  workflows   using   EAS   Build,   GitHub   Actions,   and   Codemagic.  ●  Experienced  in  debugging  production  issues,  analyzing  application  crashes,   -Mobile  Devel...",
+            "activities.  ●  Collaborated  with  cross-functional  teams  to  troubleshoot  production  issues,  enhance   UI/UX,   and   deliver   high-quality   mobile   experiences.  ●  Followed  Agile  methodologies,  participated  in  sprint  planning,  code  reviews,  and  release   management   using   Az...",
+            "●  Integrated  Firebase  Cloud  Messaging  (FCM)  and  APNs  for  notification  workflows  across   foreground,   background,   and   terminated   application   states.  ●  Configured  and  maintained  EAS  Build  workflows  for  Android  and  iOS  application  builds,   testing,   and   release   g...",
+            "notifications   when   matching   jobs   are   posted.  ●  Performance  Tracking:  Application  status  updates  and  notifications  keep  job  seekers   informed   throughout   the   hiring   process.  ●  Remote  Config  Management:  Firebase  Remote  Config  is  used  to  dynamically  update  app...",
+            "Navigation  &  Integration:  React  Navigation,  Expo  Router,  Deep  Linking,  Authentication,   Biometric   Authentication.    Notifications:  Firebase  Cloud  Messaging  (FCM),  Apple  Push  Notification  Service  (APNs),   Pushwoosh.    Firebase:  Firebase  Authentication,  Firestore,  Cloud  Fu...",
+            "●  Developed  job  alert  functionality  with  Firebase  Cloud  Messaging  (FCM)  push  notifications   for   newly   posted   jobs.  ●  Implemented  Expo  Router  for  navigation  architecture  and  route  management  across   application   modules.  ●  Configured  and  maintained  EAS  Build  pipe...",
+            "application   states.  ●  Optimized  application  performance  through  efficient  state  management  using  Redux   Toolkit,   API   caching,   pagination,   and   lazy   loading   techniques.  ●  Managed  Firebase  Authentication,  Firestore  security  rules,  and  role-based  access  control.  ●...",
+            "Description   Job  Space  is  a  next-generation  job-seeking  platform  designed  exclusively  for  Australia  and  New   Zealand.   It   empowers   job   seekers   to   explore   opportunities   across   sectors,   create   professional   profiles,   and   apply   seamlessly   to   roles.   ●  Job..."
+          ]
+        },
+        "rerank": {
+          "duration_ms": 1082.7,
+          "docs_after_rerank": 1,
+          "top_score": -0.4726,
+          "documents": [
+            {
+              "text": "Project  Name:  Swapsi   Technologies:  React  Native,  Expo  Managed  Workflow,  Expo  Router,  EAS  Build,  TypeScript,   Firebase,   Node.js   (Express),   Firestore,   Stripe   Payments,   Google   Authentication,   Firebase   Remote   Config,   Firebase   Cloud   Messaging   (FCM),   React   Na...",
+              "score": -0.4726
+            }
+          ]
+        },
+        "generate": {
+          "duration_ms": 1141.6,
+          "answer": "The **Swapsi** project is built with a full‑stack mobile‑first tech stack, including:\n\n- **Front‑end (mobile app)**: React Native, Expo Managed Workflow, Expo Router, EAS Build, TypeScript, React Navigation, Redux Toolkit, React Native Reanimated, StoreKit (iOS), Google Play Billing & In‑App Purchases.  \n- **Back‑end / services**: Node.js with Express, Firebase (Firestore, Remote Config, Cloud Messaging), Stripe Payments, Google Authentication, Socket.io/WebSocket.  \n- **DevOps & CI/CD**: Codemagic, GitHub Actions.  \n\nThese are the technologies powering the Swapsi application."
+        }
+      },
+      "total_duration_ms": 2259.9,
+      "issues": [
+        {
+          "stage": "rerank",
+          "type": "low_relevance",
+          "detail": "Top rerank score is -0.4726 (<= 0): no retrieved chunk was judged actually relevant to the query -- the reranker fell back to returning its best (still irrelevant) match."
+        }
+      ],
+      "status": "issues_found"
+    }
+  ]
+}
