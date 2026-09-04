@@ -13,9 +13,10 @@ logger = logging.getLogger("rag.pipeline")
 
 
 class Answer:
-    def __init__(self, answer: str, contexts: list[str]):
+    def __init__(self, answer: str, contexts: list[str], issues: list[dict] | None = None):
         self.answer = answer
         self.contexts = contexts
+        self.issues = issues or []
 
 
 class Pipeline(ABC):
@@ -145,4 +146,4 @@ class SimpleRAGPipeline(Pipeline):
             },
         )
 
-        return Answer(answer=answer, contexts=reranked_docs)
+        return Answer(answer=answer, contexts=reranked_docs, issues=issues)

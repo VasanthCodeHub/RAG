@@ -77,6 +77,8 @@ if query:
         with st.spinner("Thinking..."):
             response = pipeline.run(query)
         st.markdown(response.answer)
+        for issue in response.issues:
+            st.warning(f"⚠️ {issue['stage']}/{issue['type']}: {issue['detail']}")
         with st.expander("Sources used"):
             for i, ctx in enumerate(response.contexts, 1):
                 st.markdown(f"**Chunk {i}:** {ctx}")
