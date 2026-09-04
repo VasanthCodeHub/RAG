@@ -13,10 +13,22 @@ logger = logging.getLogger("rag.pipeline")
 
 
 class Answer:
-    def __init__(self, answer: str, contexts: list[str], issues: list[dict] | None = None):
+    def __init__(
+        self,
+        answer: str,
+        contexts: list[str],
+        issues: list[dict] | None = None,
+        reasoning: str | None = None,
+        trace: dict | None = None,
+    ):
         self.answer = answer
         self.contexts = contexts
         self.issues = issues or []
+        self.reasoning = reasoning
+        # Full per-stage trace record (same shape written to
+        # eval/trace_report.json) -- lets callers (e.g. the API layer) show
+        # the whole pipeline without recomputing or re-deriving it.
+        self.trace = trace or {}
 
 
 class Pipeline(ABC):
@@ -96,8 +108,11 @@ class SimpleRAGPipeline(Pipeline):
         prompt = ANSWER_PROMPT.format(query=query, context="\n".join(reranked_docs))
         generate_start = time.perf_counter()
         with traced_stage(logger, "generate", query_id=query_id) as info:
-            answer = self.llm.generate(prompt)
+            gen_result = self.llm.generate_with_reasoning(prompt)
+            answer = gen_result["content"]
+            reasoning = gen_result.get("reasoning")
             info["answer_len"] = len(answer) if answer else 0
+            info["has_reasoning"] = reasoning is not None
         generate_ms = (time.perf_counter() - generate_start) * 1000
 
         total_ms = (time.perf_counter() - start) * 1000
@@ -108,42 +123,47 @@ class SimpleRAGPipeline(Pipeline):
         )
 
         issues, _ = detect_issues(relevant_docs, reranked_docs, scores, answer)
-        record_query_trace(
-            query_id,
-            {
-                "query_id": query_id,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "query": query,
-                "steps": {
-                    "retrieve": {
-                        "duration_ms": round(retrieve_ms, 1),
-                        "top_k": self.retrieval_top_k,
-                        "docs_retrieved": len(relevant_docs),
-                        "documents_preview": [preview_text(d) for d in relevant_docs],
-                    },
-                    "rerank": {
-                        "duration_ms": round(rerank_ms, 1),
-                        "docs_after_rerank": len(reranked_docs),
-                        "top_score": round(top_score, 4) if top_score is not None else None,
-                        "documents": [
-                            {
-                                "text": preview_text(doc),
-                                "score": round(float(score), 4) if scores else None,
-                            }
-                            for doc, score in zip(
-                                reranked_docs, scores or [None] * len(reranked_docs)
-                            )
-                        ],
-                    },
-                    "generate": {
-                        "duration_ms": round(generate_ms, 1),
-                        "answer": answer,
-                    },
+        record = {
+            "query_id": query_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "query": query,
+            "steps": {
+                "retrieve": {
+                    "duration_ms": round(retrieve_ms, 1),
+                    "top_k": self.retrieval_top_k,
+                    "docs_retrieved": len(relevant_docs),
+                    "documents_preview": [preview_text(d) for d in relevant_docs],
                 },
-                "total_duration_ms": round(total_ms, 1),
-                "issues": issues,
-                "status": "issues_found" if issues else "ok",
+                "rerank": {
+                    "duration_ms": round(rerank_ms, 1),
+                    "docs_after_rerank": len(reranked_docs),
+                    "top_score": round(top_score, 4) if top_score is not None else None,
+                    "documents": [
+                        {
+                            "text": preview_text(doc),
+                            "score": round(float(score), 4) if scores else None,
+                        }
+                        for doc, score in zip(
+                            reranked_docs, scores or [None] * len(reranked_docs)
+                        )
+                    ],
+                },
+                "generate": {
+                    "duration_ms": round(generate_ms, 1),
+                    "answer": answer,
+                    "reasoning": reasoning,
+                },
             },
-        )
+            "total_duration_ms": round(total_ms, 1),
+            "issues": issues,
+            "status": "issues_found" if issues else "ok",
+        }
+        record_query_trace(query_id, record)
 
-        return Answer(answer=answer, contexts=reranked_docs, issues=issues)
+        return Answer(
+            answer=answer,
+            contexts=reranked_docs,
+            issues=issues,
+            reasoning=reasoning,
+            trace=record,
+        )

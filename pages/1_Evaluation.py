@@ -4,22 +4,17 @@ import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
 
-from eval.judges import LLMJudge, check_judge_calibration, rule_check
-from eval.regression_cases import JUDGE_CALIBRATION_SET, REGRESSION_CASES, RESUME_CORPUS
-from eval.run_regression import RERANK_TOP_K, combined_score, old_buggy_rerank
-from rag.llm import GroqLLM
-from rag.prompt import ANSWER_PROMPT
-from rag.rerank import CrossEncoderRerank
-from rag.retrieval import EmbeddingRetrieval
+from ui.api_client import list_ratings, run_calibration, run_regression
 
 load_dotenv()
 
-st.set_page_config(page_title="Evaluation", page_icon="🧪")
+st.set_page_config(page_title="Evaluation", page_icon="🧪", layout="wide")
 st.title("🧪 Evaluation")
 st.caption(
     "Permanent regression tests built from real production failures "
     "(`eval/trace_report.json`), scored with cheap rule checks first and an "
-    "LLM judge for what rules can't decide (tone, helpfulness)."
+    "LLM judge for what rules can't decide (tone, helpfulness). Served by the "
+    "same FastAPI backend the chat page talks to."
 )
 
 with st.sidebar:
@@ -37,17 +32,7 @@ if not os.getenv("GROQ_API_KEY"):
     st.warning("Enter your Groq API key in the sidebar to run the evaluation suite.")
     st.stop()
 
-
-@st.cache_resource(show_spinner="Loading models (embedding + cross-encoder)...")
-def build_eval_resources(api_key: str):
-    retrieval = EmbeddingRetrieval(documents=RESUME_CORPUS)
-    reranker = CrossEncoderRerank(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
-    llm = GroqLLM(api_key=api_key)
-    return retrieval, reranker, llm
-
-
-retrieval, reranker, llm = build_eval_resources(os.environ["GROQ_API_KEY"])
-judge = LLMJudge(llm)
+api_key = os.environ["GROQ_API_KEY"]
 
 st.subheader("1. Judge calibration")
 st.caption(
@@ -56,7 +41,7 @@ st.caption(
 )
 if st.button("Run calibration check"):
     with st.spinner("Scoring calibration set..."):
-        calibration = check_judge_calibration(judge, JUDGE_CALIBRATION_SET)
+        calibration = run_calibration(api_key)
 
     col1, col2 = st.columns(2)
     col1.metric("Helpfulness agreement", f"{calibration['helpfulness_agreement']:.0%}")
@@ -90,60 +75,38 @@ st.caption(
 )
 
 if st.button("Run regression suite", type="primary"):
-    rows = []
-    by_problem_type: dict[str, list[tuple[float, float]]] = {}
-
-    progress = st.progress(0.0, text="Running cases...")
-    for i, case in enumerate(REGRESSION_CASES):
-        docs, _ = retrieval.retrieve(case["question"], top_k=100)
-
-        before_docs, _ = old_buggy_rerank(reranker, case["question"], docs, RERANK_TOP_K)
-        before_answer = llm.generate(
-            ANSWER_PROMPT.format(query=case["question"], context="\n".join(before_docs))
-        )
-        after_docs, _ = reranker.rerank(case["question"], docs, top_k=RERANK_TOP_K)
-        after_answer = llm.generate(
-            ANSWER_PROMPT.format(query=case["question"], context="\n".join(after_docs))
-        )
-
-        scores = {}
-        for label, docs_used, answer in (("before", before_docs, before_answer), ("after", after_docs, after_answer)):
-            rules = rule_check(case, answer, docs_used)
-            judge_result = judge.score(case["question"], "\n".join(docs_used), answer)
-            score = combined_score(rules, judge_result)
-            scores[label] = score
-            rows.append(
-                {
-                    "problem_type": case["problem_type"],
-                    "question": case["question"],
-                    "stage": label,
-                    "docs_used": len(docs_used),
-                    "source_present": rules["source_present"],
-                    "refusal_correct": rules["refusal_correct"],
-                    "keyword_present": rules["keyword_present"],
-                    "judge_helpfulness": judge_result["helpfulness"],
-                    "judge_tone": judge_result["tone"],
-                    "score": round(score, 2),
-                    "answer": answer,
-                }
-            )
-        by_problem_type.setdefault(case["problem_type"], []).append((scores["before"], scores["after"]))
-        progress.progress((i + 1) / len(REGRESSION_CASES), text=f"Ran {i + 1}/{len(REGRESSION_CASES)} cases")
+    with st.spinner("Running regression cases (retrieval + rerank + judge)..."):
+        result = run_regression(api_key)
 
     st.markdown("#### Per-case detail")
-    st.dataframe(pd.DataFrame(rows), width="stretch")
+    st.dataframe(pd.DataFrame(result["rows"]), width="stretch")
 
     st.markdown("#### Score per problem type (before → after)")
-    summary_rows = []
-    for problem_type, pairs in by_problem_type.items():
-        before_avg = sum(p[0] for p in pairs) / len(pairs)
-        after_avg = sum(p[1] for p in pairs) / len(pairs)
-        summary_rows.append(
-            {
-                "problem_type": problem_type,
-                "before": round(before_avg, 2),
-                "after": round(after_avg, 2),
-                "delta": round(after_avg - before_avg, 2),
-            }
-        )
-    st.dataframe(pd.DataFrame(summary_rows), width="stretch")
+    st.dataframe(pd.DataFrame(result["summary"]), width="stretch")
+
+st.divider()
+st.subheader("3. Your ratings so far")
+st.caption("Ratings saved from the chat page's \"Rate this answer\" flow.")
+ratings = list_ratings()
+if not ratings:
+    st.caption("No ratings saved yet — rate an answer on the main chat page first.")
+else:
+    ratings_df = pd.DataFrame(ratings)
+    st.dataframe(ratings_df, width="stretch")
+
+    tolerance = 1
+    help_agree = sum(
+        1
+        for r in ratings
+        if r.get("judge_helpfulness") is not None
+        and abs(r["judge_helpfulness"] - r["human_helpfulness"]) <= tolerance
+    )
+    tone_agree = sum(
+        1
+        for r in ratings
+        if r.get("judge_tone") is not None and abs(r["judge_tone"] - r["human_tone"]) <= tolerance
+    )
+    n = len(ratings)
+    col1, col2 = st.columns(2)
+    col1.metric("Your vs. judge — helpfulness agreement", f"{help_agree / n:.0%}")
+    col2.metric("Your vs. judge — tone agreement", f"{tone_agree / n:.0%}")

@@ -20,6 +20,15 @@ class BaseLLM(ABC):
     def chat(self, prompt: str, **kwargs):
         raise NotImplementedError
 
+    def generate_with_reasoning(self, prompt: str, **kwargs) -> dict:
+        """Like generate(), but also returns the model's reasoning/chain-of-
+        thought text when the underlying model exposes one. Default
+        implementation just wraps generate() with reasoning=None; only
+        models that actually support it (e.g. GroqLLM with a reasoning
+        model) override this.
+        """
+        return {"content": self.generate(prompt, **kwargs), "reasoning": None}
+
 
 class GeminiLLM(BaseLLM):
     def __init__(self, *args, **kwargs):
@@ -89,16 +98,34 @@ class GroqLLM(BaseLLM):
         - prompt: str: The prompt to generate text from.
         - max_retries: int: How many times to retry on failure.
         """
+        return self.generate_with_reasoning(prompt, **kwargs)["content"]
+
+    def generate_with_reasoning(self, prompt: str, **kwargs) -> dict:
+        """Like generate(), but also returns the model's reasoning trace.
+        Only `gpt-oss` Groq models currently support `reasoning_format`, so
+        it's only requested for those -- other models just come back with
+        reasoning=None.
+        - prompt: str: The prompt to generate text from.
+        - max_retries: int: How many times to retry on failure.
+        """
         max_retries = kwargs.get("max_retries", 3)
+        request_kwargs = dict(
+            model=self.model_name,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+        )
+        if "gpt-oss" in self.model_name:
+            request_kwargs["reasoning_format"] = "parsed"
+
         last_error = None
         for attempt in range(1, max_retries + 1):
             try:
-                response = self.client.chat.completions.create(
-                    model=self.model_name,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.0,
-                )
-                return response.choices[0].message.content
+                response = self.client.chat.completions.create(**request_kwargs)
+                message = response.choices[0].message
+                return {
+                    "content": message.content,
+                    "reasoning": getattr(message, "reasoning", None),
+                }
             except Exception as error:
                 last_error = error
                 logger.warning(

@@ -34,5 +34,9 @@ setuptools.setup(
         "pypdf",
         "python-dotenv",
         "streamlit",
+        "fastapi",
+        "uvicorn[standard]",
+        "chromadb",
+        "requests",
     ],
 )

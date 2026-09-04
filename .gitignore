@@ -3,6 +3,7 @@
 
 # Custom
 *.pdf
+.chroma_data/
 
 # Mac temporary files that should never be committed
 *.DS_Store
