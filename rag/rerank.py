@@ -33,21 +33,11 @@ class CrossEncoderRerank(BaseRerank):
         """
         cross_inp = [[query, passage] for passage in documents]
         cross_scores = self.model.predict(cross_inp)
-        passage_scores = {}
-        for idx, score in enumerate(cross_scores):
-            passage_scores[idx] = score
         # sorted by cross-encoder scores desc
-        sorted_passages = sorted(
-            passage_scores.items(), key=lambda x: x[1], reverse=True
+        sorted_idx = sorted(
+            range(len(documents)), key=lambda i: cross_scores[i], reverse=True
         )
-        relevants = []
-        scores = []
-        for idx, score in sorted_passages[:top_k]:
-            if score > 0:
-                relevants.append(documents[idx])
-                scores.append(score)
-        if len(relevants) == 0:
-            idx, score = sorted_passages[0]
-            relevants.append(documents[idx])
-            scores.append(score)
+        top_idx = sorted_idx[:top_k]
+        relevants = [documents[i] for i in top_idx]
+        scores = [cross_scores[i] for i in top_idx]
         return relevants, scores

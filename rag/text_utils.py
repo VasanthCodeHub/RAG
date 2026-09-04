@@ -1,4 +1,15 @@
+import re
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+
+def clean_text(text: str) -> str:
+    """Collapse the repeated spaces pypdf leaves behind when it extracts
+    justified PDF text (e.g. "Project  Name:  Swapsi   Technologies:").
+    Newlines are left alone so the splitter's paragraph/line separators
+    still work; only runs of spaces/tabs are collapsed.
+    """
+    return re.sub(r"[ \t]+", " ", text)
 
 
 def text2chunk(text: str, chunk_size: int, overlap: int = 0) -> list[str]:
@@ -13,4 +24,4 @@ def text2chunk(text: str, chunk_size: int, overlap: int = 0) -> list[str]:
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size, chunk_overlap=overlap
     )
-    return splitter.split_text(text)
+    return splitter.split_text(clean_text(text))
