@@ -1,0 +1,7 @@
+claims_agent claim_id=CLM-1003 status=budget_exceeded budget=max_iterations iterations_used=2 total_tokens=1483 cost_usd=0.00029 latency_ms=1437.0
+
+Tool calls made before termination:
+  [1] get_claim({'claim_id': 'CLM-1003'}) -> {'claim_id': 'CLM-1003', 'claimant': 'Maria Santos', 'claim_type': 'home', 'status': 'under_review', 'reported_amount': 20000, 'deductible': 1000, 'adjuster_notes': 'River overflowed after heavy rain; flood water entered the basement and ruined the flooring.'}
+  [2] search_policy({'peril': 'flood'}) -> {'peril': 'flood', 'excluded': True, 'note': 'Flood damage is excluded under a standard policy; requires separate flood insurance.'}
+
+The run stopped cleanly here instead of spinning: max_iterations was reached before compute_payout could be called, so the loop returned a budget_exceeded result rather than forcing a 3rd tool call.

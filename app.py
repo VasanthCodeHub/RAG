@@ -1,4 +1,5 @@
 import os
+import time
 
 import pandas as pd
 import streamlit as st
@@ -11,6 +12,8 @@ load_dotenv()
 
 st.set_page_config(page_title="Simple RAG", page_icon="📄", layout="wide")
 theme.inject_base_css()
+
+STEP_LABELS = ["Question received", "Retrieving chunks", "Reranking", "Generating answer"]
 
 QUALITY_KIND = {"strong_match": "success", "weak_match": "warning", "no_relevant_match": "danger"}
 QUALITY_LABELS = {
@@ -104,6 +107,7 @@ st.write("")
 
 
 def render_assistant_message(msg: dict, idx: int) -> None:
+    st.markdown(theme.steps_row(STEP_LABELS, len(STEP_LABELS)), unsafe_allow_html=True)
     st.markdown(msg["answer"])
 
     for issue in msg.get("issues", []):
@@ -217,8 +221,15 @@ if query:
         st.markdown(query)
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            result = run_query(st.session_state.pdf_hash, query)
+        # Transient animated preview while waiting; render_assistant_message()
+        # below renders the same steps again, permanently, as part of the message.
+        progress = st.empty()
+        for step_idx in range(3):
+            progress.markdown(theme.steps_row(STEP_LABELS, step_idx), unsafe_allow_html=True)
+            time.sleep(0.18)
+        result = run_query(st.session_state.pdf_hash, query)
+        progress.empty()
+
         msg = {"role": "assistant", "judge": None, "rating_saved": False, **result}
         st.session_state.messages.append(msg)
         render_assistant_message(msg, len(st.session_state.messages) - 1)

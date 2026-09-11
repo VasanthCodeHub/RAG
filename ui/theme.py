@@ -213,6 +213,47 @@ def inject_base_css() -> None:
         }}
 
         hr {{ border-color: {BORDER}; }}
+
+        /* ---- Horizontal progress steps ---- */
+        .rag-steps {{
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin: 0.2rem 0 0.8rem 0;
+        }}
+        .rag-step {{
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }}
+        .rag-step--done {{ background: {SUCCESS_BG}; color: {SUCCESS}; }}
+        .rag-step--active {{
+            background: {INFO_BG};
+            color: {PRIMARY};
+            animation: rag-pulse 1.1s ease-in-out infinite;
+        }}
+        .rag-step--pending {{
+            background: {BG_SOFT};
+            color: {MUTED};
+            border: 1px dashed {BORDER};
+        }}
+        .rag-step--danger {{ background: {DANGER_BG}; color: {DANGER}; }}
+        .rag-step-sep {{
+            width: 14px;
+            height: 1px;
+            background: {BORDER};
+            flex-shrink: 0;
+        }}
+        @keyframes rag-pulse {{
+            0%, 100% {{ opacity: 1; }}
+            50% {{ opacity: 0.5; }}
+        }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -245,6 +286,43 @@ def stat(label: str, value: str) -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+def steps_row(labels: list[str], active_idx: int) -> str:
+    """Horizontal step tracker: steps before active_idx are done, active_idx
+    is in-progress, the rest are pending. Pass active_idx >= len(labels) to
+    mark everything done.
+    """
+    parts = []
+    for i, label in enumerate(labels):
+        if i < active_idx:
+            cls, icon = "rag-step--done", "✓"
+        elif i == active_idx:
+            cls, icon = "rag-step--active", "●"
+        else:
+            cls, icon = "rag-step--pending", "○"
+        parts.append(f'<div class="rag-step {cls}"><span>{icon}</span>{label}</div>')
+        if i < len(labels) - 1:
+            parts.append('<div class="rag-step-sep"></div>')
+    return f'<div class="rag-steps">{"".join(parts)}</div>'
+
+
+def tool_steps_row(tool_names: list[str], blocked_reason: str | None = None) -> str:
+    """Horizontal row of executed tool calls (all shown done, since they
+    already happened), optionally followed by a danger-styled terminal step
+    when a run stopped early (e.g. a budget was hit before the last tool
+    call). Used to visualize an agent/workflow's actual tool-call sequence.
+    """
+    if not tool_names and not blocked_reason:
+        return '<div class="rag-steps"><div class="rag-step rag-step--pending"><span>○</span>no tool calls</div></div>'
+    parts = []
+    for i, name in enumerate(tool_names):
+        parts.append(f'<div class="rag-step rag-step--done"><span>✓</span>{name}</div>')
+        if i < len(tool_names) - 1 or blocked_reason:
+            parts.append('<div class="rag-step-sep"></div>')
+    if blocked_reason:
+        parts.append(f'<div class="rag-step rag-step--danger"><span>⛔</span>{blocked_reason}</div>')
+    return f'<div class="rag-steps">{"".join(parts)}</div>'
 
 
 def badge(text: str, kind: str = "neutral") -> str:
