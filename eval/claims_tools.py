@@ -15,7 +15,7 @@ import time
 
 from groq import Groq
 
-from eval.claims_data import CLAIMS_BY_ID, POLICY_EXCLUSIONS
+from eval.claims_data import CLAIMS_BY_ID, POLICY_EXCLUSIONS, TRIGGER_KEYWORDS
 
 MODEL_NAME = "openai/gpt-oss-120b"
 
@@ -80,6 +80,31 @@ def compute_payout(claim_id: str, disposition: str) -> dict:
     else:
         payout = max(claim["reported_amount"] - claim["deductible"], 0)
     return {"claim_id": claim_id, "disposition": disposition, "payout": payout}
+
+
+# Negation cues checked just before a keyword match, e.g. "no flooding
+# involved" should NOT trigger the "flood" exclusion check. Shared by the
+# fixed workflow (eval/claims_workflow.py) and the Week 8 agent guard
+# (eval/claims_agent.py) so both agree on when search_policy is required.
+_NEGATIONS = ("no ", "not ", "without ", "n't ", "never ")
+
+
+def detect_trigger_peril(notes: str) -> str | None:
+    """Return the first excludable peril keyword mentioned in `notes` (and
+    not negated), or None. This is the ground-truth check for "does this
+    claim require a search_policy call" -- independent of whatever a model
+    (or an injected instruction inside the notes) claims.
+    """
+    lowered = notes.lower()
+    for keyword in TRIGGER_KEYWORDS:
+        idx = lowered.find(keyword)
+        if idx == -1:
+            continue
+        window = lowered[max(0, idx - 12):idx]
+        if any(neg in window for neg in _NEGATIONS):
+            continue
+        return keyword
+    return None
 
 
 TOOL_FUNCS = {

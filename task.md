@@ -87,3 +87,50 @@ Add a sliding window plus summarisation to the agent so it survives a claim with
 ---
 
 *Set D of 6. Sets A–F are equivalent in difficulty and objectives; only the domain differs.*
+
+
+
+
+
+WEEK 8 · MODULE 4 — AGENTS
+Agent Failure Modes & Trajectory Evals
+Build week
+Spot how your agent fails, defend it against tricks, and measure a fix to its worst problem.
+What this week is about
+Agents fail in new and sneaky ways — going in circles, picking the wrong tool, or reaching a right answer through a lucky wrong path that will break later. This week you learn to watch the whole path, not just the final answer, and to protect the agent from being tricked.
+Why it matters
+If the answer is right, why care how it got there?
+A right answer reached by luck won't stay right. Next week the same lucky path gives a wrong answer, in production, to a customer.
+What is “prompt injection”?
+When hidden instructions inside a document or web page trick your agent into doing something it shouldn't. The agent can't tell your instructions from the text it reads.
+Why give tools the least access possible?
+Your agent is helpful and holds your keys. If something goes wrong, tightly-scoped tools keep the damage small.
+What you'll learn
+•	The common agent failures: loops, wrong tool, made-up inputs, giving up quietly
+•	Judging the whole path, not just the final answer
+•	The gap between “got the right answer” and “took the right steps” — and why it matters
+•	Prompt injection: hidden instructions in documents or web pages that hijack your agent
+•	Defending the agent: checking what it reads, and limiting what each tool can do
+•	Fixing the worst failure and measuring that it actually went down
+Topics covered
+The exact concepts to study:
+•	Agent failure modes   ·   Trajectory evaluation
+•	Expected tool sequences   ·   Tool-choice accuracy
+•	Outcome vs trajectory gap   ·   Cost per task (mean & p99)
+•	Prompt injection (direct)   ·   Indirect prompt injection
+•	Tool sandboxing & least privilege   ·   Output validation
+•	OWASP LLM Top 10
+Your task this week
+Evaluated	Week 9 · Monday
+
+Look at a batch of your agent's runs and find where it took a wrong path even when the answer looked right. Try a simple attack that hides an instruction in a document, then defend against it, and fix your top failure — measuring the improvement.
+Choose your track
+Same task, six different topics — so everyone works on their own version. Download whichever you're assigned.
+
+	Topic	Task
+A	Customer support tickets	Find the outcome-vs-trajectory gap in the ticket agent, then close one mode
+B	Recipes & food	Find the outcome-vs-trajectory gap in the recipe agent, then close one mode
+C	HR policy	Find the outcome-vs-trajectory gap in the HR agent, then close one mode
+D	Insurance claims	Find the outcome-vs-trajectory gap in the claims agent, then close one mode
+E	Developer documentation	Find the outcome-vs-trajectory gap in the docs agent, then close one mode
+F	Legal contracts	Find the outcome-vs-trajectory gap in the contract agent, then close one mode

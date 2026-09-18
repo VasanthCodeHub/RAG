@@ -1,0 +1,21 @@
+claim_id,guarded,passed,trajectory_match,outcome_vs_trajectory_gap,expected_trajectory,actual_trajectory
+CLM-1001,False,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1002,False,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1003,False,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1004,False,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1005,False,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1006,False,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1007,False,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1008,False,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1009,False,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1010,False,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1001,True,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1002,True,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1003,True,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1004,True,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1005,True,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout
+CLM-1006,True,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1007,True,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1008,True,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1009,True,True,True,False,get_claim -> compute_payout,get_claim -> compute_payout
+CLM-1010,True,True,True,False,get_claim -> search_policy -> compute_payout,get_claim -> search_policy -> compute_payout

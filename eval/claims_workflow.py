@@ -9,26 +9,16 @@ there's no open-ended decision-making to bound: the path is fixed at
 
 import time
 
-from eval.claims_data import CLAIMS_BY_ID, TRIGGER_KEYWORDS
-from eval.claims_tools import ClaimsLLM, UsageTracker, compute_payout, explain, get_claim, search_policy
-
-
-# Negation cues checked just before a keyword match, e.g. "no flooding
-# involved" should NOT trigger the "flood" exclusion check.
-_NEGATIONS = ("no ", "not ", "without ", "n't ", "never ")
-
-
-def _detect_trigger_peril(notes: str) -> str | None:
-    lowered = notes.lower()
-    for keyword in TRIGGER_KEYWORDS:
-        idx = lowered.find(keyword)
-        if idx == -1:
-            continue
-        window = lowered[max(0, idx - 12):idx]
-        if any(neg in window for neg in _NEGATIONS):
-            continue
-        return keyword
-    return None
+from eval.claims_data import CLAIMS_BY_ID
+from eval.claims_tools import (
+    ClaimsLLM,
+    UsageTracker,
+    compute_payout,
+    detect_trigger_peril,
+    explain,
+    get_claim,
+    search_policy,
+)
 
 
 def run_workflow(claim_id: str, llm: ClaimsLLM) -> dict:
@@ -42,7 +32,7 @@ def run_workflow(claim_id: str, llm: ClaimsLLM) -> dict:
     if claim_record["status"] == "denied":
         disposition = "denied"
     else:
-        peril = _detect_trigger_peril(claim_record["adjuster_notes"])
+        peril = detect_trigger_peril(claim_record["adjuster_notes"])
         if peril:
             policy_result = search_policy(peril)
             tool_log.append({"iteration": 2, "tool": "search_policy", "args": {"peril": peril}, "result": policy_result})

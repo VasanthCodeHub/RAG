@@ -69,7 +69,10 @@ def main():
     print(f"{'claim_id':<10} {'system':<9} {'pass':<6} {'disposition':<10} {'payout':>8} {'iters':>6} {'tokens':>7} {'cost_usd':>9} {'latency_ms':>11}")
     for claim in CLAIMS:
         claim_id = claim["claim_id"]
-        agent_result = run_agent(claim_id, llm)
+        # guarded=False: keep this reproducing the original Week 7 race
+        # exactly as submitted. The Week 8 guard is exercised separately in
+        # eval/claims_trajectory_eval.py and eval/claims_injection_eval.py.
+        agent_result = run_agent(claim_id, llm, guarded=False)
         workflow_result = run_workflow(claim_id, llm)
         agent_results.append(agent_result)
         workflow_results.append(workflow_result)
