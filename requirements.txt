@@ -10,3 +10,5 @@ fastapi==0.141.1
 uvicorn[standard]==0.52.3
 chromadb==1.5.9
 requests==2.34.2
+mcp[cli]==2.2.0
+httpx==0.28.1

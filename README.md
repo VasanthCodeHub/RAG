@@ -72,3 +72,10 @@ Uploaded PDFs are chunked and embedded into a persistent [Chroma](https://www.tr
 collection under `.chroma_data/`, keyed by a hash of the file's bytes — so
 re-uploading the same PDF (even after restarting the backend) skips
 re-embedding entirely.
+
+## MCP server
+
+`mcp_server/` exposes document ingestion and Q&A as MCP tools, so any MCP
+host (Claude Desktop, Claude Code, another agent) can call this app's RAG
+pipeline directly. See [`mcp_server/README.md`](mcp_server/README.md) for
+setup.

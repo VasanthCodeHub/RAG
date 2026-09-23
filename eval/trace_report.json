@@ -793,6 +793,150 @@
         }
       ],
       "status": "issues_found"
+    },
+    {
+      "query_id": "e9aafc00",
+      "timestamp": "2026-09-23T09:25:41.513670+00:00",
+      "query": "What is the capital of Testland?",
+      "steps": {
+        "retrieve": {
+          "duration_ms": 53.9,
+          "top_k": 100,
+          "docs_retrieved": 1,
+          "documents_preview": [
+            "Hello from the MCP explorer smoke test. The capital of Testland is Mocktown."
+          ]
+        },
+        "rerank": {
+          "duration_ms": 56.9,
+          "docs_after_rerank": 1,
+          "top_score": 8.4999,
+          "documents": [
+            {
+              "text": "Hello from the MCP explorer smoke test. The capital of Testland is Mocktown.",
+              "score": 8.4999
+            }
+          ]
+        },
+        "generate": {
+          "duration_ms": 767.6,
+          "answer": "The capital of Testland is **Mocktown**.",
+          "reasoning": "The user asks: \"Answer the following query using the provided context. - Query: What is the capital of Testland? - Context: Hello from the MCP explorer smoke test. The capital of Testland is Mocktown.\"\n\nWe just need to answer: The capital of Testland is Mocktown. Provide answer."
+        }
+      },
+      "total_duration_ms": 878.6,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "query_id": "8e1ed2cd",
+      "timestamp": "2026-09-23T09:31:53.467408+00:00",
+      "query": "what this project avout",
+      "steps": {
+        "retrieve": {
+          "duration_ms": 51.1,
+          "top_k": 100,
+          "docs_retrieved": 8,
+          "documents_preview": [
+            "Analysis team looked past individual screens to trace how value moves between customers, agents, merchants and external partners. The resulting overview captures what the product does today, how each major journey works, and what data it depends on. It gives product and technology teams a shared, st...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 5   —   R E S U L T S   &   I M P A C T The whole platform, mapped in one view 1M+ Customer app downloads on Google Play, the user base this overview documents 19 Customer app capability areas documented, from account and KYC to Sanad 10 Agent and merchant a...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 3   —   T H E   S O L U T I O N One overview, three perspectives Soft Suave's Business Analysis team documented ONE Cash as a digital transaction layer rather than a list of screens. The overview maps both applications, traces the four major user journeys st...",
+            "Covers customer registration and activation, cash-in and cash-out, voucher redemption, bills, airtime, wallet-to-bank transfers, money transfers, refunds and business cash-in, plus how merchants receive and manage payments. Agent & Merchant… Agent activities 10 Voucher Redeem Merchant Payments 0 3 J...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 4   —   K E Y   F E A T U R E S Twelve areas, one platform view Registration, KYC & Account Management Multi-Currency Wallet & SAR/USD → YER Exchange Customer & Voucher-Based Non-Customer Transfers Agent Cash-In, Cash-Out & Voucher Redemption Bill Payments,...",
+            "C A S E   S T U D Y   ·   F I N T E C H   ·   B U S I N E S S   A N A L Y S I S D I G I T A L   W A L L E T S   ·   A P P L I C A T I O N   O V E R V I E W ONE Cash A Business Analyst's Map of Yemen's Multi-Service Digital Wallet A structured overview of how ONE Cash works across its Customer app an...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 1   —   A B O U T   T H E   C L I E N T A digital alternative to everyday cash ONE Cash is a digital wallet that provides electronic financial services to customers in Yemen. Customers use it to store money in YER, SAR and USD, send and receive funds, pay bi...",
+            "Journeys cross many parties A single cash-in, bill or merchant payment moves between a customer, an agent or merchant, the wallet, and an external bank, biller or remittance service. Data from many sources KYC, balances, beneficiaries, billers, vouchers, exchange rates and transaction status all fee..."
+          ]
+        },
+        "rerank": {
+          "duration_ms": 424.6,
+          "docs_after_rerank": 3,
+          "top_score": -10.8195,
+          "documents": [
+            {
+              "text": "F I N T E C H   ·   C A S E   S T U D Y 0 3   —   T H E   S O L U T I O N One overview, three perspectives Soft Suave's Business Analysis team documented ONE Cash as a digital transaction layer rather than a list of screens. The overview maps both applications, traces the four major user journeys st...",
+              "score": -10.8195
+            },
+            {
+              "text": "Analysis team looked past individual screens to trace how value moves between customers, agents, merchants and external partners. The resulting overview captures what the product does today, how each major journey works, and what data it depends on. It gives product and technology teams a shared, st...",
+              "score": -10.8495
+            },
+            {
+              "text": "F I N T E C H   ·   C A S E   S T U D Y 0 1   —   A B O U T   T H E   C L I E N T A digital alternative to everyday cash ONE Cash is a digital wallet that provides electronic financial services to customers in Yemen. Customers use it to store money in YER, SAR and USD, send and receive funds, pay bi...",
+              "score": -10.9795
+            }
+          ]
+        },
+        "generate": {
+          "duration_ms": 1428.7,
+          "answer": "**Project Overview**\n\nThe project is a **case‑study of “ONE Cash,” a digital‑wallet platform built for customers in Yemen**.  \n\n- **What it is:** A digital alternative to everyday cash that lets users store money in three currencies (YER, SAR, USD) and perform a wide range of electronic financial services.  \n- **Key capabilities for customers:** account/KYC setup, wallet management, transfers (to other customers, banks, e‑wallets, MoneyGram), bill payments, airtime/top‑up purchases, merchant and QR payments, currency exchange, and special services such as ONE Cup and Sanad.  \n- **Agent & merchant side:** A companion app enables agents and merchants to register customers, handle cash‑in/cash‑out, redeem vouchers, process bills, airtime, wallet‑to‑bank transfers, refunds, and business cash‑in.  \n\n- **Scope & complexity:** The solution spans **two applications** (customer app and agent/merchant app), covering **19 customer capability areas** and **10 agent activities**. Each transaction (e.g., cash‑in, bill payment, merchant purchase) can involve multiple parties—customer, agent/merchant, the wallet, and external financial services (banks, billers, remittance providers).  \n\n- **Purpose of the study:** Soft Suave’s Business Analysis team documented ONE Cash as a **digital transaction layer** rather than a simple list of screens. They mapped the four major user journeys, organized the platform into four architectural layers (from end‑users down to external services), and produced an overview that gives product and technology teams a shared, structured baseline for future enhancements.  \n\nIn short, the project is about **designing, documenting, and analyzing a comprehensive digital‑wallet ecosystem that replaces physical cash with a full‑featured electronic financial service for Yemeni users and their supporting agent/merchant network**.",
+          "reasoning": "We need to answer query: \"what this project avout\" (typo: about). Use context. Summarize project: ONE Cash digital wallet for Yemen, digital alternative to cash, features, etc. Provide concise answer."
+        }
+      },
+      "total_duration_ms": 1905.0,
+      "issues": [
+        {
+          "stage": "rerank",
+          "type": "low_relevance",
+          "detail": "Top rerank score is -10.8195 (<= 0): no retrieved chunk was judged actually relevant to the query -- the reranker fell back to returning its best (still irrelevant) match."
+        }
+      ],
+      "status": "issues_found"
+    },
+    {
+      "query_id": "99130b2f",
+      "timestamp": "2026-09-23T09:35:28.822441+00:00",
+      "query": "what this document about?\n",
+      "steps": {
+        "retrieve": {
+          "duration_ms": 38.4,
+          "top_k": 100,
+          "docs_retrieved": 8,
+          "documents_preview": [
+            "C A S E   S T U D Y   ·   F I N T E C H   ·   B U S I N E S S   A N A L Y S I S D I G I T A L   W A L L E T S   ·   A P P L I C A T I O N   O V E R V I E W ONE Cash A Business Analyst's Map of Yemen's Multi-Service Digital Wallet A structured overview of how ONE Cash works across its Customer app an...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 5   —   R E S U L T S   &   I M P A C T The whole platform, mapped in one view 1M+ Customer app downloads on Google Play, the user base this overview documents 19 Customer app capability areas documented, from account and KYC to Sanad 10 Agent and merchant a...",
+            "Analysis team looked past individual screens to trace how value moves between customers, agents, merchants and external partners. The resulting overview captures what the product does today, how each major journey works, and what data it depends on. It gives product and technology teams a shared, st...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 3   —   T H E   S O L U T I O N One overview, three perspectives Soft Suave's Business Analysis team documented ONE Cash as a digital transaction layer rather than a list of screens. The overview maps both applications, traces the four major user journeys st...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 4   —   K E Y   F E A T U R E S Twelve areas, one platform view Registration, KYC & Account Management Multi-Currency Wallet & SAR/USD → YER Exchange Customer & Voucher-Based Non-Customer Transfers Agent Cash-In, Cash-Out & Voucher Redemption Bill Payments,...",
+            "Covers customer registration and activation, cash-in and cash-out, voucher redemption, bills, airtime, wallet-to-bank transfers, money transfers, refunds and business cash-in, plus how merchants receive and manage payments. Agent & Merchant… Agent activities 10 Voucher Redeem Merchant Payments 0 3 J...",
+            "F I N T E C H   ·   C A S E   S T U D Y 0 1   —   A B O U T   T H E   C L I E N T A digital alternative to everyday cash ONE Cash is a digital wallet that provides electronic financial services to customers in Yemen. Customers use it to store money in YER, SAR and USD, send and receive funds, pay bi...",
+            "Journeys cross many parties A single cash-in, bill or merchant payment moves between a customer, an agent or merchant, the wallet, and an external bank, biller or remittance service. Data from many sources KYC, balances, beneficiaries, billers, vouchers, exchange rates and transaction status all fee..."
+          ]
+        },
+        "rerank": {
+          "duration_ms": 430.1,
+          "docs_after_rerank": 3,
+          "top_score": -5.2172,
+          "documents": [
+            {
+              "text": "F I N T E C H   ·   C A S E   S T U D Y 0 5   —   R E S U L T S   &   I M P A C T The whole platform, mapped in one view 1M+ Customer app downloads on Google Play, the user base this overview documents 19 Customer app capability areas documented, from account and KYC to Sanad 10 Agent and merchant a...",
+              "score": -5.2172
+            },
+            {
+              "text": "Analysis team looked past individual screens to trace how value moves between customers, agents, merchants and external partners. The resulting overview captures what the product does today, how each major journey works, and what data it depends on. It gives product and technology teams a shared, st...",
+              "score": -7.7597
+            },
+            {
+              "text": "F I N T E C H   ·   C A S E   S T U D Y 0 3   —   T H E   S O L U T I O N One overview, three perspectives Soft Suave's Business Analysis team documented ONE Cash as a digital transaction layer rather than a list of screens. The overview maps both applications, traces the four major user journeys st...",
+              "score": -8.4096
+            }
+          ]
+        },
+        "generate": {
+          "duration_ms": 1061.0,
+          "answer": "The document is a **FinTech case‑study report** prepared by Soft Suave Technologies.  \nIt presents a **comprehensive overview of the ONE Cash platform** – a multi‑service digital transaction layer – by:\n\n* Mapping the entire system (customer app, agent/merchant app, and external financial services) in a single view.  \n* Detailing the **19 capability areas** of the customer app (account & KYC, wallets, transfers, bill payments, QR‑merchant payments, Sanad, etc.).  \n* Describing the **10 agent and merchant activities** and how they interact with the platform.  \n* Tracing the **four major user journeys** end‑to‑end (money transfer, cash‑in, bill payment, merchant payment).  \n* Organizing the platform into four architectural layers (users → agents/merchants → services → external partners).  \n\nThe purpose is to give product and technology teams a **shared, structured baseline** for understanding the current state of ONE Cash and for planning future improvements.",
+          "reasoning": "We need to answer: \"what this document about?\" using the provided context. Summarize that it's a case study about FinTech ONE Cash platform, a business analysis overview by Soft Suave, mapping capabilities, user journeys, etc. Provide concise answer."
+        }
+      },
+      "total_duration_ms": 1530.1,
+      "issues": [
+        {
+          "stage": "rerank",
+          "type": "low_relevance",
+          "detail": "Top rerank score is -5.2172 (<= 0): no retrieved chunk was judged actually relevant to the query -- the reranker fell back to returning its best (still irrelevant) match."
+        }
+      ],
+      "status": "issues_found"
     }
   ]
 }
