@@ -68,6 +68,16 @@ answer" to run the LLM judge and add your own score. The **Evaluation** page
 (in the sidebar nav) runs the judge calibration check and the before/after
 regression suite, and shows every rating you've saved.
 
+The **A2A Team** page compares a manager that delegates parallel work to two
+document specialists with a single direct MCP answer. Both paths call the
+existing `ask_pdf` MCP tool. The API advertises its manager at
+`/.well-known/agent-card.json`, lists agents at `/a2a/agents`, and accepts the
+A2A JSON-RPC `message/send` method at `/a2a/{agent_name}`. Start the FastAPI
+backend and Streamlit frontend as above; ingest a PDF on the chat or MCP page,
+then open A2A Team to run the comparison. Token counts use Groq usage metadata;
+cost is an estimate for `openai/gpt-oss-120b` at the rates documented on the
+page.
+
 Uploaded PDFs are chunked and embedded into a persistent [Chroma](https://www.trychroma.com/)
 collection under `.chroma_data/`, keyed by a hash of the file's bytes — so
 re-uploading the same PDF (even after restarting the backend) skips

@@ -8,6 +8,9 @@ from groq import Groq
 
 logger = logging.getLogger("rag.llm")
 
+PRICE_PER_PROMPT_TOKEN = 0.15 / 1_000_000
+PRICE_PER_COMPLETION_TOKEN = 0.75 / 1_000_000
+
 
 class BaseLLM(ABC):
 
@@ -122,9 +125,25 @@ class GroqLLM(BaseLLM):
             try:
                 response = self.client.chat.completions.create(**request_kwargs)
                 message = response.choices[0].message
+                usage = getattr(response, "usage", None)
+                prompt_tokens = getattr(usage, "prompt_tokens", None)
+                completion_tokens = getattr(usage, "completion_tokens", None)
+                token_usage = None
+                if prompt_tokens is not None and completion_tokens is not None:
+                    token_usage = {
+                        "prompt_tokens": int(prompt_tokens),
+                        "completion_tokens": int(completion_tokens),
+                        "total_tokens": int(prompt_tokens + completion_tokens),
+                    }
+                    if self.model_name == "openai/gpt-oss-120b":
+                        token_usage["estimated_cost_usd"] = (
+                            prompt_tokens * PRICE_PER_PROMPT_TOKEN
+                            + completion_tokens * PRICE_PER_COMPLETION_TOKEN
+                        )
                 return {
                     "content": message.content,
                     "reasoning": getattr(message, "reasoning", None),
+                    "usage": token_usage,
                 }
             except Exception as error:
                 last_error = error

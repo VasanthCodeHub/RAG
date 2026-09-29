@@ -46,4 +46,5 @@ def run_query(req: QueryRequest):
         steps=trace["steps"],
         contexts=response.contexts,
         quality_signal=_quality_signal(trace),
+        usage=trace.get("usage"),
     )

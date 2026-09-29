@@ -34,6 +34,7 @@ class QueryResponse(BaseModel):
     steps: dict[str, Any]
     contexts: list[str]
     quality_signal: QualitySignal
+    usage: dict[str, Any] | None = None
 
 
 class JudgeRequest(BaseModel):

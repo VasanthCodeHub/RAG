@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import documents, eval_routes, health, judge, query, ratings
+from api.routers import a2a, documents, eval_routes, health, judge, query, ratings
 from rag.tracing import configure_logging
 
 load_dotenv()
@@ -27,3 +27,4 @@ app.include_router(query.router)
 app.include_router(judge.router)
 app.include_router(ratings.router)
 app.include_router(eval_routes.router)
+app.include_router(a2a.router)

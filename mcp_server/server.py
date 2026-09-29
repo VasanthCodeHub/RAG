@@ -117,6 +117,8 @@ def ask_pdf(pdf_hash: str, question: str) -> dict:
         "contexts": body["contexts"],
         "quality_signal": body["quality_signal"],
         "status": body["status"],
+        "usage": body.get("usage"),
+        "duration_ms": body.get("total_duration_ms"),
     }
 
 

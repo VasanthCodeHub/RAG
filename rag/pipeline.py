@@ -111,6 +111,7 @@ class SimpleRAGPipeline(Pipeline):
             gen_result = self.llm.generate_with_reasoning(prompt)
             answer = gen_result["content"]
             reasoning = gen_result.get("reasoning")
+            usage = gen_result.get("usage")
             info["answer_len"] = len(answer) if answer else 0
             info["has_reasoning"] = reasoning is not None
         generate_ms = (time.perf_counter() - generate_start) * 1000
@@ -152,8 +153,10 @@ class SimpleRAGPipeline(Pipeline):
                     "duration_ms": round(generate_ms, 1),
                     "answer": answer,
                     "reasoning": reasoning,
+                    "usage": usage,
                 },
             },
+            "usage": usage,
             "total_duration_ms": round(total_ms, 1),
             "issues": issues,
             "status": "issues_found" if issues else "ok",
