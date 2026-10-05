@@ -3,6 +3,7 @@ import time
 from abc import ABC
 from datetime import datetime, timezone
 
+from . import observability
 from .llm import BaseLLM
 from .prompt import ANSWER_PROMPT
 from .rerank import BaseRerank
@@ -58,11 +59,102 @@ class SimpleRAGPipeline(Pipeline):
         assert issubclass(self.llm.__class__, BaseLLM)
         self.retrieval_top_k = kwargs.get("retrieval_top_k", 100)
         self.rerank_top_k = kwargs.get("rerank_top_k", 3)
+        # Optional semantic cache + the document it is scoped to. The
+        # namespace includes the model so switching models never serves an
+        # answer another model produced.
+        self.cache = kwargs.get("cache")
+        self.pdf_hash = kwargs.get("pdf_hash")
+        self.cache_namespace = f"{self.pdf_hash or 'default'}:{getattr(self.llm, 'model_name', 'llm')}"
 
-    def run(self, query: str) -> Answer:
+    def run(self, query: str, use_cache: bool = True) -> Answer:
+        """Answer `query`. `use_cache=False` forces the full pipeline (used
+        when replaying failure cases, which must test the real path).
+        """
         query_id = new_trace_id()
+        token = observability.query_id_var.set(query_id)
+        try:
+            return self._run(query, query_id, use_cache)
+        except Exception as error:
+            logger.exception("query_id=%s stage=failed error=%r", query_id, error)
+            observability.record_query_metrics(
+                {"query_id": query_id, "query": query, "steps": {}, "issues": []},
+                pdf_hash=self.pdf_hash,
+                error=repr(error),
+            )
+            observability.record_failure(
+                query_id, "exception", query=query, pdf_hash=self.pdf_hash, detail=repr(error)
+            )
+            raise
+        finally:
+            observability.query_id_var.reset(token)
+
+    def _answer_from_cache(self, query, query_id, start, lookup) -> Answer:
+        entry = lookup["entry"]
+        cached = entry["payload"]
+        total_ms = (time.perf_counter() - start) * 1000
+        saved = (cached.get("usage") or {}).get("estimated_cost_usd", 0.0) or 0.0
+        cache_info = {
+            "hit": True,
+            "similarity": lookup["similarity"],
+            "matched_query": entry["query"],
+            "age_s": round(time.time() - entry["created"], 1),
+            "saved_cost_usd": saved,
+        }
+        rerank_step = {**cached["rerank_step"], "duration_ms": 0.0}
+        record = {
+            "query_id": query_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "query": query,
+            "steps": {
+                "retrieve": {"duration_ms": 0.0, "docs_retrieved": 0, "from_cache": True},
+                "rerank": rerank_step,
+                "generate": {
+                    "duration_ms": 0.0,
+                    "answer": cached["answer"],
+                    "reasoning": cached.get("reasoning"),
+                    "usage": None,
+                },
+            },
+            # Zero spend on a hit; what it *would* have cost is in cache.saved_cost_usd.
+            "usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+                "estimated_cost_usd": 0.0,
+            },
+            "total_duration_ms": round(total_ms, 1),
+            "issues": [],
+            "status": "ok",
+            "cache": cache_info,
+        }
+        logger.info(
+            "query_id=%s stage=cache status=hit similarity=%s matched_query=%r "
+            "total_duration_ms=%.1f saved_cost_usd=%.5f",
+            query_id, lookup["similarity"], entry["query"], total_ms, saved,
+        )
+        record_query_trace(query_id, record)
+        observability.record_query_metrics(record, pdf_hash=self.pdf_hash, cache=cache_info)
+        return Answer(
+            answer=cached["answer"],
+            contexts=cached["contexts"],
+            issues=[],
+            reasoning=cached.get("reasoning"),
+            trace=record,
+        )
+
+    def _run(self, query: str, query_id: str, use_cache: bool) -> Answer:
         start = time.perf_counter()
         logger.info("query_id=%s stage=start query=%r", query_id, query)
+
+        cache_info = {"hit": False}
+        if self.cache and use_cache:
+            with traced_stage(logger, "cache_lookup", query_id=query_id) as info:
+                lookup = self.cache.lookup(self.cache_namespace, query)
+                info["hit"] = lookup["hit"]
+                info["best_similarity"] = lookup["similarity"]
+            if lookup["hit"]:
+                return self._answer_from_cache(query, query_id, start, lookup)
+            cache_info["similarity"] = lookup["similarity"]
 
         # Retrieve documents
         retrieve_start = time.perf_counter()
@@ -160,8 +252,34 @@ class SimpleRAGPipeline(Pipeline):
             "total_duration_ms": round(total_ms, 1),
             "issues": issues,
             "status": "issues_found" if issues else "ok",
+            "cache": cache_info if self.cache else None,
         }
         record_query_trace(query_id, record)
+        observability.record_query_metrics(record, pdf_hash=self.pdf_hash, cache=cache_info)
+        if issues:
+            observability.record_failure(
+                query_id,
+                "issue:" + issues[0]["type"],
+                query=query,
+                answer=answer,
+                pdf_hash=self.pdf_hash,
+                detail="; ".join(i["type"] for i in issues),
+                issues=issues,
+            )
+        elif self.cache and use_cache and answer and answer.strip():
+            # Only clean, grounded answers are cached: never freeze a
+            # low-relevance/empty-context answer into the cache.
+            self.cache.store(
+                self.cache_namespace,
+                query,
+                {
+                    "answer": answer,
+                    "reasoning": reasoning,
+                    "contexts": reranked_docs,
+                    "usage": usage,
+                    "rerank_step": record["steps"]["rerank"],
+                },
+            )
 
         return Answer(
             answer=answer,

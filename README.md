@@ -89,3 +89,12 @@ re-embedding entirely.
 host (Claude Desktop, Claude Code, another agent) can call this app's RAG
 pipeline directly. See [`mcp_server/README.md`](mcp_server/README.md) for
 setup.
+
+## Observability, cost & the failure -> test loop
+
+- **Logs**: `logs/app.jsonl` (rotating, one JSON object per line). Every line from the `rag`/`api` loggers carries `query_id` and `request_id`, so `grep <query_id> logs/app.jsonl` shows one question's whole journey (cache lookup, retrieve, rerank, generate, retries, errors). Each HTTP response also returns an `x-request-id` header.
+- **Metrics**: `logs/queries.jsonl` has one row per query (stage latencies, tokens, cost, cache hit, issues, `slow_query`/`expensive_query` alerts). The **Observability** page (`pages/6_Observability.py`) shows p50/p95 latency, spend, and what the cache saved.
+- **Semantic cache** (`rag/semantic_cache.py`): repeat or near-duplicate questions on the same document + model are answered from cache with zero tokens. Exact normalized match first, then embedding cosine >= `RAG_CACHE_THRESHOLD` (default 0.92). Only clean answers are cached (no detected issues). `POST /query` accepts `use_cache=false` to bypass it. Clear it from the Observability page.
+- **Failure -> test loop**: failures (detected issues, exceptions, human ratings <= 2) are logged to `logs/failures.jsonl`. On the Observability page, promote one and state what a correct answer must contain; it is pinned in `eval/failure_cases.jsonl`. Replay all pinned cases against the real pipeline with `python -m eval.failure_loop`; the same cases run in `python -m unittest tests.test_observability` when `GROQ_API_KEY` is set.
+
+All knobs are in `.env.example`.

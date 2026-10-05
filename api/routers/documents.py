@@ -10,6 +10,7 @@ from rag.data_helper import PDFReader
 from rag.llm import GroqLLM
 from rag.pipeline import SimpleRAGPipeline
 from rag.rerank import CrossEncoderRerank
+from rag.semantic_cache import get_shared_cache
 from rag.retrieval import ChromaRetrieval, _load_chroma_client
 from rag.text_utils import text2chunk
 
@@ -65,7 +66,13 @@ async def upload_document(file: UploadFile = File(...), groq_api_key: str = Form
 
     rerank = CrossEncoderRerank(model_name=CROSS_ENCODER_MODEL)
     llm = GroqLLM(api_key=groq_api_key)
-    pipeline = SimpleRAGPipeline(retrieval=retrieval, llm=llm, rerank=rerank)
+    pipeline = SimpleRAGPipeline(
+        retrieval=retrieval,
+        llm=llm,
+        rerank=rerank,
+        cache=get_shared_cache(),
+        pdf_hash=pdf_hash,
+    )
 
     store.put(
         pdf_hash,

@@ -32,7 +32,7 @@ def run_query(req: QueryRequest):
     if not entry:
         raise HTTPException(status_code=404, detail="Unknown pdf_hash -- upload the document first.")
 
-    response = entry["pipeline"].run(req.query)
+    response = entry["pipeline"].run(req.query, use_cache=req.use_cache)
     trace = response.trace
 
     return QueryResponse(
@@ -47,4 +47,5 @@ def run_query(req: QueryRequest):
         contexts=response.contexts,
         quality_signal=_quality_signal(trace),
         usage=trace.get("usage"),
+        cache=trace.get("cache"),
     )

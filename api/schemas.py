@@ -14,6 +14,7 @@ class DocumentIngestResponse(BaseModel):
 class QueryRequest(BaseModel):
     pdf_hash: str
     query: str
+    use_cache: bool = True
 
 
 class QualitySignal(BaseModel):
@@ -35,6 +36,7 @@ class QueryResponse(BaseModel):
     contexts: list[str]
     quality_signal: QualitySignal
     usage: dict[str, Any] | None = None
+    cache: dict[str, Any] | None = None
 
 
 class JudgeRequest(BaseModel):

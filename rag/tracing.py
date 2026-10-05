@@ -44,6 +44,34 @@ def configure_logging() -> None:
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
+    # Structured JSON logs (rotating) for both the pipeline (`rag`) and the
+    # API/A2A layer (`api`); every line carries query_id/request_id.
+    # RAG_JSON_LOG=0 turns this off.
+    from logging.handlers import RotatingFileHandler
+
+    from .observability import ContextFilter, JsonFormatter, log_dir
+
+    context_filter = ContextFilter()
+    stream_handler.addFilter(context_filter)
+    stream_handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)s [%(levelname)s] %(name)s [q=%(query_id)s r=%(request_id)s]: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
+    api_logger = logging.getLogger("api")
+    api_logger.setLevel(level)
+    api_logger.addHandler(stream_handler)
+    if os.getenv("RAG_JSON_LOG", "1").lower() not in ("0", "false", "no"):
+        log_dir().mkdir(parents=True, exist_ok=True)
+        json_handler = RotatingFileHandler(
+            log_dir() / "app.jsonl", maxBytes=5_000_000, backupCount=5, encoding="utf-8"
+        )
+        json_handler.setFormatter(JsonFormatter())
+        json_handler.addFilter(context_filter)
+        logger.addHandler(json_handler)
+        api_logger.addHandler(json_handler)
+
 
 def new_trace_id() -> str:
     return uuid.uuid4().hex[:8]
