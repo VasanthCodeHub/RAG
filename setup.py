@@ -33,7 +33,6 @@ setuptools.setup(
         "rank_bm25",
         "pypdf",
         "python-dotenv",
-        "streamlit",
         "fastapi",
         "uvicorn[standard]",
         "chromadb",

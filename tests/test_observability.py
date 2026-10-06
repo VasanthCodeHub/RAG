@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from eval import failure_loop
-from rag import observability
+from observability import metrics as observability
 from rag.llm import BaseLLM
 from rag.pipeline import SimpleRAGPipeline
 from rag.rerank import BaseRerank

@@ -1,5 +1,5 @@
 """Race the claims agent against the fixed workflow (requirement 3 of
-task.md) over the same 10 synthetic claims (eval.claims_data.CLAIMS).
+task.md) over the same 10 synthetic claims (agent.claims_data.CLAIMS).
 
 Reports, per system: pass rate, p50 latency, total tokens, cost/claim --
 written to eval/claims_race.csv (8 numbers) and printed as a table. Also
@@ -21,10 +21,10 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 
 from dotenv import load_dotenv
 
-from eval.claims_agent import run_agent
-from eval.claims_data import CLAIMS
-from eval.claims_tools import ClaimsLLM
-from eval.claims_workflow import run_workflow
+from agent.claims_agent import run_agent
+from agent.claims_data import CLAIMS
+from agent.claims_tools import ClaimsLLM
+from agent.claims_workflow import run_workflow
 
 load_dotenv()
 

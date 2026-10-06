@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from a2a.protocol import agent_card, message_text, task_response
-from api.routers.a2a import _metrics, _run_manager
+from a2a.manager import _metrics, _run_manager
 
 
 class A2AProtocolTests(unittest.TestCase):
@@ -79,8 +79,8 @@ class A2AProtocolTests(unittest.TestCase):
             }
 
         with (
-            patch("api.routers.a2a._send_to_agent", side_effect=fake_agent),
-            patch("api.routers.a2a._ask_mcp", side_effect=fake_mcp),
+            patch("a2a.manager._send_to_agent", side_effect=fake_agent),
+            patch("a2a.manager._ask_mcp", side_effect=fake_mcp),
         ):
             result = asyncio.run(_run_manager("pdf-hash", "question"))
 

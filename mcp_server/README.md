@@ -8,7 +8,7 @@ questions about it. It's a thin client of the existing FastAPI backend
 
 ```bash
 # Terminal 1 — the RAG API backend this server proxies to
-.venv/Scripts/python.exe -m uvicorn api.main:app --port 8000
+.venv/Scripts/python.exe -m uvicorn backend.main:app --port 8000
 
 # Terminal 2 — smoke-test the MCP server with the MCP inspector
 .venv/Scripts/python.exe -m mcp dev mcp_server/server.py

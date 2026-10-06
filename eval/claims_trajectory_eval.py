@@ -4,7 +4,7 @@ Requirement: "Look at a batch of your agent's runs and find where it took a
 wrong path even when the answer looked right" (the outcome-vs-trajectory
 gap), then "fix your top failure -- measuring the improvement."
 
-For each of the 10 Week 7 claims (eval.claims_data.CLAIMS) this script:
+For each of the 10 Week 7 claims (agent.claims_data.CLAIMS) this script:
 
 1. Derives the GROUND-TRUTH expected tool sequence from the claim's own
    status/notes (independent of what the model does):
@@ -37,9 +37,9 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 
 from dotenv import load_dotenv
 
-from eval.claims_agent import run_agent
-from eval.claims_data import CLAIMS
-from eval.claims_tools import ClaimsLLM, detect_trigger_peril
+from agent.claims_agent import run_agent
+from agent.claims_data import CLAIMS
+from agent.claims_tools import ClaimsLLM, detect_trigger_peril
 
 load_dotenv()
 

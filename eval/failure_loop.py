@@ -20,7 +20,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from rag import observability
+from observability import metrics as observability
 
 CASES_FILE = Path(os.getenv("RAG_FAILURE_CASES_FILE", "eval/failure_cases.jsonl"))
 CHROMA_PERSIST_DIR = ".chroma_data"

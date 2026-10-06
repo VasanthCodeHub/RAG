@@ -8,7 +8,7 @@ persistent Chroma store, so this process stays small and any other client
 behavior.
 
 Run the backend first:
-    .venv/Scripts/python.exe -m uvicorn api.main:app --port 8000
+    .venv/Scripts/python.exe -m uvicorn backend.main:app --port 8000
 
 Then run this server (stdio transport, for an MCP host to launch directly):
     .venv/Scripts/python.exe -m mcp_server.server
@@ -34,7 +34,7 @@ def _api_error(prefix: str, exc: Exception) -> str:
     if isinstance(exc, httpx.ConnectError):
         return (
             f"{prefix}: could not reach the RAG API at {API_BASE_URL}. "
-            "Start it with: .venv/Scripts/python.exe -m uvicorn api.main:app --port 8000"
+            "Start it with: .venv/Scripts/python.exe -m uvicorn backend.main:app --port 8000"
         )
     if isinstance(exc, httpx.HTTPStatusError):
         return f"{prefix}: {exc.response.status_code} {exc.response.text}"

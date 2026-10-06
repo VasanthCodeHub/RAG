@@ -3,12 +3,12 @@ import time
 from abc import ABC
 from datetime import datetime, timezone
 
-from . import observability
+from observability import metrics as observability
 from .llm import BaseLLM
 from .prompt import ANSWER_PROMPT
 from .rerank import BaseRerank
 from .retrieval import BaseRetrieval
-from .tracing import detect_issues, new_trace_id, preview_text, record_query_trace, traced_stage
+from observability.tracing import detect_issues, new_trace_id, preview_text, record_query_trace, traced_stage
 
 logger = logging.getLogger("rag.pipeline")
 

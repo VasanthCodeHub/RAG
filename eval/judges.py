@@ -109,7 +109,7 @@ def rule_check(case: dict, answer: str, contexts: list[str]) -> dict:
 # Tier 2: LLM judge, for qualities rules can't check (tone, helpfulness).
 # ---------------------------------------------------------------------------
 
-JUDGE_RUBRIC = """You are grading one answer from a resume Q&A assistant. Be strict and consistent.
+JUDGE_RUBRIC = """You are grading one answer from a document Q&A assistant. Be strict and consistent.
 
 Question: {question}
 Context given to the assistant: {context}
