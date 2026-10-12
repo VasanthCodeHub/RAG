@@ -1,0 +1,47 @@
+[
+  {
+    "config": "A no cache",
+    "requests": 30,
+    "llm_calls": 30,
+    "cache_hits": 0,
+    "hit_rate": 0.0,
+    "total_cost_usd": 0.006313,
+    "cost_per_request_usd": 0.0002104,
+    "avg_tokens_per_llm_call": 746.7,
+    "p50_ms": 4891.5,
+    "p95_ms": 6729.5,
+    "failures_logged": 3,
+    "avg_ms_cache_hit": null,
+    "wall_s": 114.7
+  },
+  {
+    "config": "B cache + old detector",
+    "requests": 30,
+    "llm_calls": 24,
+    "cache_hits": 6,
+    "hit_rate": 0.2,
+    "total_cost_usd": 0.004968,
+    "cost_per_request_usd": 0.0001656,
+    "avg_tokens_per_llm_call": 746.7,
+    "p50_ms": 5173.6,
+    "p95_ms": 6823.0,
+    "failures_logged": 15,
+    "avg_ms_cache_hit": 0.0,
+    "wall_s": 135.2
+  },
+  {
+    "config": "C cache + new detector",
+    "requests": 30,
+    "llm_calls": 20,
+    "cache_hits": 10,
+    "hit_rate": 0.333,
+    "total_cost_usd": 0.004199,
+    "cost_per_request_usd": 0.00014,
+    "avg_tokens_per_llm_call": 740.4,
+    "p50_ms": 5006.5,
+    "p95_ms": 5984.2,
+    "failures_logged": 2,
+    "avg_ms_cache_hit": 0.0,
+    "wall_s": 107.2
+  }
+]

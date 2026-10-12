@@ -35,6 +35,12 @@ REFUSAL_PATTERNS = [
     "unable to determine",
     "not mentioned in the",
     "not provided in the",
+    "does not include",
+    "doesn't include",
+    "not included in",
+    "isn't included",
+    "does not mention",
+    "doesn't mention",
 ]
 
 
@@ -50,7 +56,7 @@ def has_source_context(contexts: list[str]) -> bool:
 
 def looks_like_refusal(answer: str) -> bool:
     """Does the answer read like an 'I don't know' / no-info refusal?"""
-    lowered = (answer or "").lower()
+    lowered = (answer or "").lower().replace("’", "'")  # curly apostrophe
     return any(p in lowered for p in REFUSAL_PATTERNS)
 
 

@@ -15,6 +15,7 @@ class QueryRequest(BaseModel):
     pdf_hash: str
     query: str
     use_cache: bool = True
+    session_id: Optional[str] = None  # who is asking; stamped on every log row
 
 
 class QualitySignal(BaseModel):

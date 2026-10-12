@@ -16,7 +16,7 @@ turn that into a permanent test.
 | File | Content |
 |---|---|
 | `app.jsonl` | every log line as JSON, stamped with `query_id` and `request_id` — filter one id to see one question's whole journey |
-| `queries.jsonl` | one row per query: latency, per-stage ms, tokens, **estimated cost**, cache hit/miss, issues |
+| `queries.jsonl` | one row per request: `query_id`/`request_id`/`session_id`, question **and answer**, `model`, `prompt_version`, the `chunks` sent (id, score, preview), `tool_calls`, per-step ms and cost, tokens, cache hit/miss, issues, `error_type` — full field list in [SUPPORT_DRILL.md](SUPPORT_DRILL.md) |
 | `failures.jsonl` | queries that went wrong: detected issues, exceptions, or a human rating ≤ 2 |
 
 Every HTTP response carries `x-request-id`. Cost uses the model's published per-token rates
@@ -24,7 +24,9 @@ Every HTTP response carries `x-request-id`. Cost uses the model's published per-
 
 ## Issue detection (`detect_issues`)
 
-`empty_retrieval`, `low_relevance` (top rerank score ≤ 0), `empty_context`, `empty_answer`. These
+`empty_retrieval`, `low_relevance` (top rerank score ≤ 0 **and** the answer is neither a refusal nor
+supported by the retrieved chunks — a low score alone was a false alarm for 33 of 35 logged handbook
+failures), `empty_context`, `empty_answer`. These
 set `status="issues_found"` and write a failure row. Alerts fire on queries slower than
 `RAG_SLOW_QUERY_MS` or costlier than `RAG_QUERY_COST_WARN_USD`.
 
@@ -44,5 +46,12 @@ set `status="issues_found"` and write a failure row. Alerts fire on queries slow
 
 On this machine's 54 logged queries: cache hit ≈ **4 ms** vs miss ≈ **1185 ms**; hit-rate 17%;
 $0.0094 spent, $0.0021 saved. The p95 is dominated by cold model loads and the LLM call.
+
+## Week 11 deliverables
+
+- Find one bad request from a vague complaint: `python -m eval.support_drill` → [SUPPORT_DRILL.md](SUPPORT_DRILL.md)
+- Failure turned into a test: `tests/test_failure_regression.py`, `eval/failure_cases.jsonl`
+- Cost per request, measured before/after: `python -m eval.cost_benchmark` → [COST.md](COST.md)
+- 10x traffic: `python -m eval.load_probe` → [SCALE_10X.md](SCALE_10X.md)
 
 See also: [TRACING.md](TRACING.md) (original design notes) and [TRACE_FINDINGS.md](TRACE_FINDINGS.md).

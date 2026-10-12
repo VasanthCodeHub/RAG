@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.routers import a2a, agent_routes, documents, eval_routes, health, judge, mcp_routes, observability, query, ratings
-from observability.metrics import request_id_var
+from observability.metrics import request_id_var, session_id_var
 from observability.tracing import configure_logging
 
 load_dotenv()
@@ -24,6 +24,7 @@ async def log_requests(request: Request, call_next):
     """
     request_id = request.headers.get("x-request-id") or uuid.uuid4().hex[:8]
     token = request_id_var.set(request_id)
+    session_token = session_id_var.set(request.headers.get("x-session-id") or "-")
     start = time.perf_counter()
     try:
         response = await call_next(request)
@@ -43,6 +44,7 @@ async def log_requests(request: Request, call_next):
         return response
     finally:
         request_id_var.reset(token)
+        session_id_var.reset(session_token)
 
 
 # Local single-user dev tool: the `requests` calls from app.py/pages/*.py

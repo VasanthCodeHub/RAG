@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from backend import store
 from backend.routers.documents import rehydrate
 from backend.schemas import QualitySignal, QueryRequest, QueryResponse
+from observability.metrics import session_id_var
 
 router = APIRouter(tags=["query"])
 
@@ -33,7 +34,12 @@ def run_query(req: QueryRequest):
     if not entry:
         raise HTTPException(status_code=404, detail="Unknown pdf_hash -- upload the document first.")
 
-    response = entry["pipeline"].run(req.query, use_cache=req.use_cache)
+    token = session_id_var.set(req.session_id) if req.session_id else None
+    try:
+        response = entry["pipeline"].run(req.query, use_cache=req.use_cache)
+    finally:
+        if token is not None:
+            session_id_var.reset(token)
     trace = response.trace
 
     return QueryResponse(

@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 import time
 import uuid
 from contextlib import contextmanager
@@ -131,8 +132,47 @@ def preview_text(text: str, limit: int = TRACE_PREVIEW_CHARS) -> str:
     return text if len(text) <= limit else text[:limit].rstrip() + "..."
 
 
+_STOPWORDS = {
+    "the", "and", "for", "that", "this", "with", "are", "was", "were", "you", "your", "can",
+    "may", "must", "will", "from", "have", "has", "not", "only", "any", "all", "per", "than",
+    "which", "their", "them", "its", "also", "but", "who", "what", "when", "how", "does",
+    "should", "would", "could", "about", "into", "such", "these", "those", "there", "here",
+}
+_NUMBER_WORDS = {
+    "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+    "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10",
+}
+GROUNDED_MIN_OVERLAP = 0.6
+
+
+def _content_tokens(text: str) -> set[str]:
+    """Lower-cased words/numbers worth checking, with spelled-out numbers
+    folded to digits ("three" == "3") so a paraphrase still matches.
+    """
+    tokens = re.findall(r"[a-z0-9]+", (text or "").lower())
+    tokens = [_NUMBER_WORDS.get(t, t) for t in tokens]
+    return {t for t in tokens if t not in _STOPWORDS and (len(t) > 2 or t.isdigit())}
+
+
+def answer_is_grounded(answer: str, contexts: list[str]) -> bool:
+    """Cheap, no-LLM check that the answer's content words/numbers come from
+    the context it was given (>= GROUNDED_MIN_OVERLAP of them).
+    """
+    wanted = _content_tokens(answer)
+    if not wanted:
+        return False
+    available = _content_tokens(" ".join(contexts))
+    return len(wanted & available) / len(wanted) >= GROUNDED_MIN_OVERLAP
+
+
 def detect_issues(retrieved_docs, reranked_docs, scores, answer):
     """Inspect one query's real pipeline output and flag concrete problems.
+
+    A rerank score <= 0 alone is *not* a failure: the cross-encoder scores
+    short factual questions low even when the right chunk was used, and a
+    correct "the document doesn't say" refusal also scores low. It is only
+    flagged when the answer is neither a refusal nor supported by the
+    context (see failure `831f3491`, docs/SUPPORT_DRILL.md).
 
     Returns (issues, top_score).
     """
@@ -147,7 +187,16 @@ def detect_issues(retrieved_docs, reranked_docs, scores, answer):
         )
 
     top_score = float(scores[0]) if scores else None
-    if top_score is not None and top_score <= 0:
+    from eval.judges import looks_like_refusal  # lazy: eval imports this package
+
+    low_score_ok = bool(answer) and (
+        looks_like_refusal(answer) or answer_is_grounded(answer, reranked_docs or [])
+    )
+    if top_score is not None and top_score <= 0 and low_score_ok:
+        logging.getLogger("rag.tracing").info(
+            "low_rerank_score_but_answer_ok top_score=%.4f", top_score
+        )
+    elif top_score is not None and top_score <= 0:
         issues.append(
             {
                 "stage": "rerank",

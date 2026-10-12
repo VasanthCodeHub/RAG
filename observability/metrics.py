@@ -26,12 +26,14 @@ logger = logging.getLogger("rag.observability")
 
 query_id_var: ContextVar[str] = ContextVar("query_id", default="-")
 request_id_var: ContextVar[str] = ContextVar("request_id", default="-")
+session_id_var: ContextVar[str] = ContextVar("session_id", default="-")
 
 _STANDARD_ATTRS = set(logging.LogRecord("", 0, "", 0, "", (), None).__dict__) | {
     "message",
     "asctime",
     "query_id",
     "request_id",
+    "session_id",
 }
 _lock = threading.Lock()
 
@@ -45,6 +47,7 @@ class ContextFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         record.query_id = query_id_var.get()
         record.request_id = request_id_var.get()
+        record.session_id = session_id_var.get()
         return True
 
 
@@ -57,6 +60,7 @@ class JsonFormatter(logging.Formatter):
             "msg": record.getMessage(),
             "query_id": getattr(record, "query_id", "-"),
             "request_id": getattr(record, "request_id", "-"),
+            "session_id": getattr(record, "session_id", "-"),
         }
         for key, value in record.__dict__.items():
             if key not in _STANDARD_ATTRS:
@@ -148,22 +152,40 @@ def record_query_metrics(
     steps = record.get("steps", {})
     usage = record.get("usage") or {}
     cache = cache or {}
+    cost = usage.get("estimated_cost_usd", 0.0) or 0.0
+    generate_step = steps.get("generate", {})
     row = {
+        # --- who / when -------------------------------------------------
         "query_id": record.get("query_id"),
+        "request_id": record.get("request_id") or request_id_var.get(),
+        "session_id": record.get("session_id") or session_id_var.get(),
         "ts": record.get("timestamp") or _now(),
         "pdf_hash": pdf_hash,
+        # --- input / output (so a bad answer can be read, not guessed) ---
         "query": record.get("query"),
+        "answer": generate_step.get("answer"),
+        # --- what produced it ------------------------------------------
+        "model": record.get("model"),
+        "prompt_version": record.get("prompt_version"),
+        "chunks": record.get("chunks", []),
+        "tool_calls": record.get("tool_calls", []),
+        # --- outcome ----------------------------------------------------
         "status": "error" if error else record.get("status", "ok"),
         "error": error,
+        "error_type": error.split("(", 1)[0] if error else None,
         "cache_hit": bool(cache.get("hit")),
         "cache_similarity": cache.get("similarity"),
+        # --- time and money, per step and in total ------------------------
         "total_ms": record.get("total_duration_ms"),
+        "cache_lookup_ms": steps.get("cache_lookup", {}).get("duration_ms"),
         "retrieve_ms": steps.get("retrieve", {}).get("duration_ms"),
         "rerank_ms": steps.get("rerank", {}).get("duration_ms"),
-        "generate_ms": steps.get("generate", {}).get("duration_ms"),
+        "generate_ms": generate_step.get("duration_ms"),
         "prompt_tokens": usage.get("prompt_tokens", 0),
         "completion_tokens": usage.get("completion_tokens", 0),
-        "cost_usd": usage.get("estimated_cost_usd", 0.0) or 0.0,
+        "cost_usd": cost,
+        # retrieve/rerank run locally (no per-call fee); only generate is billed
+        "step_cost_usd": {"retrieve": 0.0, "rerank": 0.0, "generate": cost},
         "saved_cost_usd": cache.get("saved_cost_usd", 0.0),
         "top_score": steps.get("rerank", {}).get("top_score"),
         "issues": [i.get("type") for i in record.get("issues", [])],

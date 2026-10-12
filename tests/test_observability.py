@@ -162,21 +162,22 @@ class _Rerank(BaseRerank):
 class _LLM(BaseLLM):
     model_name = "stub"
 
-    def __init__(self):
+    def __init__(self, content="Midhun T"):
         self.calls = 0
+        self.content = content
 
     def generate_with_reasoning(self, prompt, **kwargs):
         self.calls += 1
         return {
-            "content": "Midhun T",
+            "content": self.content,
             "reasoning": None,
             "usage": {"prompt_tokens": 50, "completion_tokens": 5, "total_tokens": 55, "estimated_cost_usd": 0.001},
         }
 
 
 class PipelineIntegrationTests(LogDirCase):
-    def _pipeline(self, score=5.0):
-        self.llm = _LLM()
+    def _pipeline(self, score=5.0, answer="Midhun T"):
+        self.llm = _LLM(answer)
         cache = SemanticCache(path=self.dir / "cache.jsonl", embed_fn=fake_embed, threshold=0.9)
         return SimpleRAGPipeline(
             retrieval=_Retrieval(), rerank=_Rerank(score), llm=self.llm, cache=cache, pdf_hash="h1"
@@ -201,7 +202,8 @@ class PipelineIntegrationTests(LogDirCase):
         self.assertEqual(self.llm.calls, 2)
 
     def test_failed_answers_are_logged_and_never_cached(self):
-        pipe = self._pipeline(score=-3.0)  # low_relevance issue
+        # low rerank score AND an answer the context doesn't support
+        pipe = self._pipeline(score=-3.0, answer="Bob Smith leads the Paris office since 2009.")
         pipe.run("who is the candidate")
         pipe.run("who is the candidate")
         self.assertEqual(self.llm.calls, 2)

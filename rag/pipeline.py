@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import time
 from abc import ABC
@@ -5,12 +6,19 @@ from datetime import datetime, timezone
 
 from observability import metrics as observability
 from .llm import BaseLLM
-from .prompt import ANSWER_PROMPT
+from .prompt import ANSWER_PROMPT, PROMPT_VERSION
 from .rerank import BaseRerank
 from .retrieval import BaseRetrieval
 from observability.tracing import detect_issues, new_trace_id, preview_text, record_query_trace, traced_stage
 
 logger = logging.getLogger("rag.pipeline")
+
+
+def chunk_id(text: str) -> str:
+    """Stable id for a chunk (hash of its text), so the same passage can be
+    matched across queries without storing the passage in every log row.
+    """
+    return hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:10]
 
 
 class Answer:
@@ -77,7 +85,13 @@ class SimpleRAGPipeline(Pipeline):
         except Exception as error:
             logger.exception("query_id=%s stage=failed error=%r", query_id, error)
             observability.record_query_metrics(
-                {"query_id": query_id, "query": query, "steps": {}, "issues": []},
+                {
+                    "query_id": query_id,
+                    "query": query,
+                    "steps": {},
+                    "issues": [],
+                    **self._provenance([]),
+                },
                 pdf_hash=self.pdf_hash,
                 error=repr(error),
             )
@@ -88,7 +102,21 @@ class SimpleRAGPipeline(Pipeline):
         finally:
             observability.query_id_var.reset(token)
 
-    def _answer_from_cache(self, query, query_id, start, lookup) -> Answer:
+    def _provenance(self, chunks: list[dict]) -> dict:
+        """Fields that say *what produced* an answer: which request/session,
+        which model and prompt wording, which chunks, which tools. RAG has no
+        tool calls; the field is kept so agent rows share one shape.
+        """
+        return {
+            "request_id": observability.request_id_var.get(),
+            "session_id": observability.session_id_var.get(),
+            "model": getattr(self.llm, "model_name", type(self.llm).__name__),
+            "prompt_version": PROMPT_VERSION,
+            "chunks": chunks,
+            "tool_calls": [],
+        }
+
+    def _answer_from_cache(self, query, query_id, start, lookup, lookup_ms=0.0) -> Answer:
         entry = lookup["entry"]
         cached = entry["payload"]
         total_ms = (time.perf_counter() - start) * 1000
@@ -102,10 +130,17 @@ class SimpleRAGPipeline(Pipeline):
         }
         rerank_step = {**cached["rerank_step"], "duration_ms": 0.0}
         record = {
+            **self._provenance(
+                [
+                    {"chunk_id": chunk_id(c), "score": d.get("score"), "preview": d.get("text")}
+                    for c, d in zip(cached["contexts"], rerank_step.get("documents", []))
+                ]
+            ),
             "query_id": query_id,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "query": query,
             "steps": {
+                "cache_lookup": {"duration_ms": round(lookup_ms, 1)},
                 "retrieve": {"duration_ms": 0.0, "docs_retrieved": 0, "from_cache": True},
                 "rerank": rerank_step,
                 "generate": {
@@ -147,13 +182,16 @@ class SimpleRAGPipeline(Pipeline):
         logger.info("query_id=%s stage=start query=%r", query_id, query)
 
         cache_info = {"hit": False}
+        cache_lookup_ms = None
         if self.cache and use_cache:
+            lookup_start = time.perf_counter()
             with traced_stage(logger, "cache_lookup", query_id=query_id) as info:
                 lookup = self.cache.lookup(self.cache_namespace, query)
                 info["hit"] = lookup["hit"]
                 info["best_similarity"] = lookup["similarity"]
+            cache_lookup_ms = (time.perf_counter() - lookup_start) * 1000
             if lookup["hit"]:
-                return self._answer_from_cache(query, query_id, start, lookup)
+                return self._answer_from_cache(query, query_id, start, lookup, cache_lookup_ms)
             cache_info["similarity"] = lookup["similarity"]
 
         # Retrieve documents
@@ -180,8 +218,10 @@ class SimpleRAGPipeline(Pipeline):
                 info["top_score"] = round(top_score, 4) if top_score is not None else None
             rerank_ms = (time.perf_counter() - rerank_start) * 1000
             if top_score is not None and top_score <= 0:
-                logger.warning(
-                    "query_id=%s stage=rerank status=low_relevance top_score=%.4f "
+                # Only a candidate flag: the verdict (failure or not) comes after
+                # generation, once the answer can be checked against the context.
+                logger.info(
+                    "query_id=%s stage=rerank status=low_score top_score=%.4f "
                     "reason=no_document_cleared_positive_score",
                     query_id,
                     top_score,
@@ -216,11 +256,27 @@ class SimpleRAGPipeline(Pipeline):
         )
 
         issues, _ = detect_issues(relevant_docs, reranked_docs, scores, answer)
+        scored = list(zip(reranked_docs, scores or [None] * len(reranked_docs)))
         record = {
+            **self._provenance(
+                [
+                    {
+                        "chunk_id": chunk_id(doc),
+                        "score": round(float(score), 4) if score is not None else None,
+                        "preview": preview_text(doc),
+                    }
+                    for doc, score in scored
+                ]
+            ),
             "query_id": query_id,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "query": query,
             "steps": {
+                **(
+                    {"cache_lookup": {"duration_ms": round(cache_lookup_ms, 1)}}
+                    if cache_lookup_ms is not None
+                    else {}
+                ),
                 "retrieve": {
                     "duration_ms": round(retrieve_ms, 1),
                     "top_k": self.retrieval_top_k,
